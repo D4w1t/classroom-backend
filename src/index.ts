@@ -1,9 +1,19 @@
 import express from "express";
+import cors from "cors";
+
+import subjectsRouter from "./routes/subjects";
 
 const app = express();
 const PORT = 8080;
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  }),
+);
 
 app.get("/", (req, res) => {
   res.send("Hello, Welcome to Classroom API");
@@ -12,3 +22,6 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+//
+app.use("/api/v1/subjects", subjectsRouter);
