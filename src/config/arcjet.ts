@@ -1,8 +1,4 @@
-import arcjet, {
-  detectBot,
-  shield,
-  slidingWindow,
-} from "@arcjet/node";
+import arcjet, { detectBot, shield } from "@arcjet/node";
 
 if (!process.env.ARCJET_KEY && process.env.NODE_ENV !== "test") {
   throw new Error("ARCJET_KEY is required in environment variables");
@@ -27,10 +23,6 @@ if (process.env.ARCJET_KEY) {
           "CATEGORY:PREVIEW", // Link previews e.g. Slack, Discord
         ],
       }),
-        // Role-based rate limiting rules
-      slidingWindow({ mode: "LIVE", interval: "1m", max: 20 }), // admins
-      slidingWindow({ mode: "LIVE", interval: "1m", max: 10 }), // teachers/students
-      slidingWindow({ mode: "LIVE", interval: "1m", max: 5 }), // guests
     ],
   });
 } else {
@@ -52,13 +44,5 @@ if (process.env.ARCJET_KEY) {
 
   aj = noopClient;
 }
-
-// Centralized role limits mapping used by middleware / configuration.
-export const ROLE_LIMITS = {
-  admin: { interval: "1m", max: 20 },
-  teacher: { interval: "1m", max: 10 },
-  student: { interval: "1m", max: 10 },
-  guest: { interval: "1m", max: 5 },
-};
 
 export default aj;

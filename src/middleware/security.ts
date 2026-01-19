@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import aj from "../config/arcjet";
-import { ArcjetNodeRequest, ArcjetRequest } from "@arcjet/node";
+import { ArcjetNodeRequest, slidingWindow } from "@arcjet/node";
 
 import { RateLimitRole } from "../type";
 
@@ -32,7 +32,13 @@ const securityMiddleware = async (
         message = "Rate limit exceeded. Please sign in or wait a moment.";
     }
 
-    const client = aj;
+    const client = aj.withRule(
+      slidingWindow({
+        mode: "LIVE",
+        interval: "1m",
+        max: limit,
+      }),
+    );
 
     // Determine a stable remote address for rate-limiting buckets.
     // Prefer socket.remoteAddress -> req.ip -> x-forwarded-for header -> generated id.
