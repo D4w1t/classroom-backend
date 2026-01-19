@@ -1,9 +1,12 @@
 import express from "express";
 import cors from "cors";
+import { toNodeHandler } from "better-auth/node";
 
 import subjectsRouter from "./routes/subjects";
 
 import securityMiddleware from "./middleware/security";
+
+import { auth } from "./lib/auth";
 
 const app = express();
 const PORT = 8080;
@@ -19,10 +22,12 @@ app.use(
   }),
 );
 
+app.all('/api/auth/*splat', toNodeHandler(auth));
+
 app.use(express.json());
 
 app.use(securityMiddleware);
-
+  
 app.get("/", (req, res) => {
   res.send("Hello, Welcome to Classroom API");
 });
