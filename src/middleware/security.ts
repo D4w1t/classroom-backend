@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import aj from "../config/arcjet";
-import { ArcjetNodeRequest, ArcjetRequest, slidingWindow } from "@arcjet/node";
+import { ArcjetNodeRequest, ArcjetRequest } from "@arcjet/node";
 
 import { RateLimitRole } from "../type";
 
@@ -32,20 +32,44 @@ const securityMiddleware = async (
         message = "Rate limit exceeded. Please sign in or wait a moment.";
     }
 
-    const client = aj.withRule(
-      slidingWindow({
-        mode: "LIVE",
-        interval: "1m", // 1 minute
-        max: limit,
-      }),
-    );
+    const client = aj;
+
+    // Determine a stable remote address for rate-limiting buckets.
+    // Prefer socket.remoteAddress -> req.ip -> x-forwarded-for header -> generated id.
+    let remoteAddress = req.socket.remoteAddress ?? req.ip ?? undefined;
+
+    if (!remoteAddress) {
+      const xff = (req.headers["x-forwarded-for"] as string | undefined)
+        ?.split(",")[0]
+        ?.trim();
+      if (xff) {
+        remoteAddress = xff;
+      } else {
+        // No network address available; create a short request-scoped id so
+        // buckets don't collide across requests. Warn so this is observable.
+        const { randomBytes } = await import("crypto");
+        const fallback = `anon-${randomBytes(6).toString("hex")}`;
+        const warnFn = (global as any).processLogger?.warn ?? console.warn;
+        warnFn?.(
+          "security middleware: missing remote address; using fallback id %s for %s %s",
+          fallback,
+          req.method,
+          req.originalUrl || req.url,
+        );
+        remoteAddress = fallback;
+      }
+    }
 
     const arcjetRequest: ArcjetNodeRequest = {
-      headers: req.headers,
+      // pass role to Arcjet so base rules can make role-based decisions
+      headers: {
+        ...req.headers,
+        "x-role": role,
+      },
       method: req.method,
       url: req.originalUrl || req.url,
       socket: {
-        remoteAddress: req.socket.remoteAddress ?? req.ip ?? "0.0.0.0",
+        remoteAddress,
       },
     };
 
