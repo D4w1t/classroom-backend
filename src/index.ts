@@ -1,15 +1,22 @@
 import express from "express";
 import cors from "cors";
+import { toNodeHandler } from "better-auth/node";
 
 import subjectsRouter from "./routes/subjects";
 
 import securityMiddleware from "./middleware/security";
+
+import { auth } from "./lib/auth";
 
 const app = express();
 const PORT = 8080;
 
 if (!process.env.FRONTEND_URL)
   throw new Error("FRONTEND_URL is required in environment variables");
+
+if (!process.env.BETTER_AUTH_SECRET) {
+  throw new Error("BETTER_AUTH_SECRET is required in environment variables");
+}
 
 app.use(
   cors({
@@ -22,6 +29,8 @@ app.use(
 app.use(express.json());
 
 app.use(securityMiddleware);
+
+app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.get("/", (req, res) => {
   res.send("Hello, Welcome to Classroom API");
