@@ -6,6 +6,8 @@ import cors from "cors";
 import { toNodeHandler } from "better-auth/node";
 
 import subjectsRouter from "./routes/subjects.js";
+import usersRouter from "./routes/users.js";
+import classesRouter from "./routes/classes.js";
 
 import securityMiddleware from "./middleware/security.js";
 
@@ -39,7 +41,9 @@ app.get("/", (req, res) => {
   res.send("Hello, Welcome to Classroom API");
 });
 
-app.use("/api/v1/subjects", subjectsRouter);
+app.use("/api/subjects", subjectsRouter);
+app.use("/api/users", usersRouter);
+app.use("/api/classes", classesRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
