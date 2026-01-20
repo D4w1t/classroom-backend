@@ -15,8 +15,8 @@ router.get("/", async (req, res) => {
     const allowedRoles = ['student', 'teacher', 'admin'] as const;
     type Role = (typeof allowedRoles)[number];
 
-    const currentPage = Math.max(1, +page);
-    const limitPerPage = Math.max(1, +limit);
+    const currentPage = Math.max(1, Number(page) || 1);
+    const limitPerPage = Math.min(100, Math.max(1, Number(limit) || 10));
 
     const offset = (currentPage - 1) * limitPerPage;
 
