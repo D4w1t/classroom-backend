@@ -8,7 +8,12 @@ const router = express.Router();
 // Get All Users with optional search, role filter and pagination
 router.get("/", async (req, res) => {
   try {
-    const { search, role, limit = 10, page = 1 } = req.query;
+    const { search, role: roleQuery, limit = 10, page = 1 } = req.query;
+
+    // Normalize role param
+    const role = Array.isArray(roleQuery) ? roleQuery[0] : roleQuery;
+    const allowedRoles = ['student', 'teacher', 'admin'] as const;
+    type Role = (typeof allowedRoles)[number];
 
     const currentPage = Math.max(1, +page);
     const limitPerPage = Math.max(1, +limit);
@@ -24,9 +29,9 @@ router.get("/", async (req, res) => {
       );
     }
 
-    // Filter by exact role
-    if (role) {
-      filterConditions.push(eq(user.role, role as string));
+    // Filter by exact role (ensure it's one of allowed enum values)
+    if (role && allowedRoles.includes(role as Role)) {
+      filterConditions.push(eq(user.role, role as Role));
     }
 
     // Combine all filters
