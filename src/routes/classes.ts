@@ -2,14 +2,21 @@ import express from "express";
 import { and, desc, eq, getTableColumns, ilike, or, sql } from "drizzle-orm";
 
 import { db } from "../db/index.js";
-import { classes, subjects, user } from "../db/schema/index.js";
+import { classes, departments, subjects, user } from "../db/schema/index.js";
 
 const router = express.Router();
 
 // Get All Classes with optional search, filtering and pagination
 router.get("/", async (req, res) => {
   try {
-    const { search, subject, teacher, limit = 10, page = 1 } = req.query;
+    const {
+      search,
+      subject,
+      teacher,
+      department,
+      limit = 10,
+      page = 1,
+    } = req.query;
 
     const currentPage = Math.max(1, Number(page) || 1);
     const limitPerPage = Math.min(100, Math.max(1, Number(limit) || 10));
@@ -38,6 +45,11 @@ router.get("/", async (req, res) => {
       filterConditions.push(ilike(user.name, `%${teacher}%`));
     }
 
+    // Filter by department name
+    if (department) {
+      filterConditions.push(ilike(departments.name, `%${department}%`));
+    }
+
     // Combine all filters
     const whereClause =
       filterConditions.length > 0 ? and(...filterConditions) : undefined;
@@ -47,6 +59,7 @@ router.get("/", async (req, res) => {
       .from(classes)
       .leftJoin(subjects, eq(classes.subjectId, subjects.id))
       .leftJoin(user, eq(classes.teacherId, user.id))
+      .leftJoin(departments, eq(subjects.departmentId, departments.id))
       .where(whereClause);
 
     const totalCount = countResult[0]?.count ?? 0;
@@ -56,10 +69,12 @@ router.get("/", async (req, res) => {
         ...getTableColumns(classes),
         subject: { ...getTableColumns(subjects) },
         teacher: { ...getTableColumns(user) },
+        department: { ...getTableColumns(departments) },
       })
       .from(classes)
       .leftJoin(subjects, eq(classes.subjectId, subjects.id))
       .leftJoin(user, eq(classes.teacherId, user.id))
+      .leftJoin(departments, eq(subjects.departmentId, departments.id))
       .where(whereClause)
       .orderBy(desc(classes.createdAt))
       .limit(limitPerPage)
