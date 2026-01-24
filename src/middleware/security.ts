@@ -19,16 +19,16 @@ const securityMiddleware = async (
 
     switch (role) {
       case "admin":
-        limit = 20;
+        limit = 200;
         message = "Admin rate limit exceeded. Slow down!";
         break;
       case "teacher":
       case "student":
-        limit = 10;
+        limit = 100;
         message = "User rate limit exceeded. Please wait a moment.";
         break;
       default:
-        limit = 5;
+        limit = 50;
         message = "Rate limit exceeded. Please sign in or wait a moment.";
     }
 
