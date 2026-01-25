@@ -35,6 +35,30 @@ app.use(express.json());
 
 app.use(securityMiddleware);
 
+// Ensure cross-site cookies are set with SameSite=None and Secure
+app.use((req, res, next) => {
+  const originalSetHeader = res.setHeader.bind(res);
+  res.setHeader = (name, value) => {
+    if (String(name).toLowerCase() === "set-cookie" && value) {
+      const cookies = Array.isArray(value) ? value : [String(value)];
+      const modified = cookies.map((cookie) => {
+        if (!/samesite=/i.test(cookie)) {
+          cookie += "; SameSite=None";
+        } else {
+          cookie = cookie.replace(/SameSite=[^;]+/i, "SameSite=None");
+        }
+        if (!/;\s*secure/i.test(cookie)) {
+          cookie += "; Secure";
+        }
+        return cookie;
+      });
+      return originalSetHeader("Set-Cookie", modified);
+    }
+    return originalSetHeader(name, value);
+  };
+  next();
+});
+
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.get("/", (req, res) => {
