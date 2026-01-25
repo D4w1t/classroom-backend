@@ -88,6 +88,11 @@ router.post("/", async (req, res) => {
 
     res.status(201).json({ data: createdDepartment });
   } catch (error) {
+    const pgError = (error as any)?.cause ?? error;
+    if (pgError?.code === "23505") {
+      return res.status(409).json({ error: "Department code already exists" });
+    }
+    
     console.error(`Error POST /departments: ${error}`);
     res.status(500).json({ error: "Error Creating department" });
   }
