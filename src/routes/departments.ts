@@ -71,12 +71,20 @@ router.post("/", async (req, res) => {
   try {
     const { code, name, description } = req.body;
 
+    if (!code || typeof code !== "string" || code.trim().length === 0) {
+      return res.status(400).json({ error: "code is required" });
+    }
+
+    if (!name || typeof name !== "string" || name.trim().length === 0) {
+      return res.status(400).json({ error: "name is required" });
+    }
+
     const [createdDepartment] = await db
       .insert(departments)
-      .values({ code, name, description })
+      .values({ code: code.trim(), name: name.trim(), description })
       .returning({ id: departments.id });
 
-    if (!createdDepartment) throw Error;
+    if (!createdDepartment) throw new Error("Failed to create department.");
 
     res.status(201).json({ data: createdDepartment });
   } catch (error) {
