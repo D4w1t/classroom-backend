@@ -97,8 +97,20 @@ app.use((err: any, req: any, res: any, next: any) => {
   res.status(status).json({ error: err?.message ?? "Internal Server Error" });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+// If running on Vercel (serverless), do NOT start a listener here. Instead, export the `app` and let the serverless adapter handle requests.
+if (!process.env.VERCEL && process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 
-  setupSwagger(app, PORT);
-});
+    setupSwagger(app, PORT);
+  });
+} else {
+  // When running serverless (e.g., Vercel), attempt to mount Swagger if available but don't crash if missing
+  try {
+    setupSwagger(app, PORT);
+  } catch (err) {
+    // In production serverless environments we skip Swagger if spec is missing
+  }
+}
+
+export default app;
