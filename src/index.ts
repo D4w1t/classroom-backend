@@ -7,13 +7,14 @@ import { toNodeHandler } from "better-auth/node";
 
 import subjectsRouter from "./routes/subjects.js";
 import usersRouter from "./routes/users.js";
-import classesRouter from "./routes/classes.js";
 import departmentsRouter from "./routes/departments.js";
 import statsRouter from "./routes/stats.js";
 
 import securityMiddleware from "./middleware/security.js";
 
 import { auth } from "./lib/auth.js";
+
+import setupSwagger from "./utils/swagger.js";
 
 const app = express();
 const PORT = Number(process.env.PORT ?? 8080);
@@ -69,10 +70,35 @@ app.get("/", (req, res) => {
 
 app.use("/api/subjects", subjectsRouter);
 app.use("/api/users", usersRouter);
-app.use("/api/classes", classesRouter);
 app.use("/api/departments", departmentsRouter);
 app.use("/api/stats", statsRouter);
 
+(async () => {
+  try {
+    const routesModule = await import("./routes/routes.js");
+    if (routesModule && typeof routesModule.RegisterRoutes === "function") {
+      const apiRouter = express.Router();
+      app.use("/api", apiRouter);
+
+      routesModule.RegisterRoutes(apiRouter);
+    }
+  } catch (err) {
+    console.error("Failed to register TSOA routes:", err);
+  }
+})();
+
+// JSON error handler: always return structured JSON errors and use err.status if provided
+app.use((err: any, req: any, res: any, next: any) => {
+  const status =
+    err?.status ||
+    err?.statusCode ||
+    (res?.statusCode && res.statusCode >= 400 ? res.statusCode : 500);
+
+  res.status(status).json({ error: err?.message ?? "Internal Server Error" });
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
+
+  setupSwagger(app, PORT);
 });
