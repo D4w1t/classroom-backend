@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "npm run generate:openapi && tsc",
     "postinstall": "npm run build",
     "start": "node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",

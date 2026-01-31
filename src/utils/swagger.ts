@@ -22,6 +22,15 @@ if (fs.existsSync(generatedPath)) {
 
 const setupSwagger = (app: Express, port: number | string) => {
   if (!swaggerSpec) {
+    // In production, don't crash the server just because the generated spec is missing.
+    // Skip mounting Swagger UI and continue running the API.
+    if (process.env.NODE_ENV === "production") {
+      console.warn(
+        "dist/swagger.json not found — skipping Swagger UI in production. Run 'npm run generate:openapi' to generate it for local/dev usage.",
+      );
+      return;
+    }
+
     throw new Error(
       "OpenAPI spec not found at dist/swagger.json. Run 'npm run generate:openapi' and restart the server.",
     );
