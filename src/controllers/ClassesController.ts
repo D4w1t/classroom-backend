@@ -162,7 +162,7 @@ export class ClassesController extends Controller {
       return { data: { id: createdClass.id } };
     } catch (err: any) {
       this.setStatus(500);
-      return { error: err?.message ?? "Internal Server Error" };
+      return { error: "Internal Server Error" };
     }
   }
 }

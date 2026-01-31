@@ -71,16 +71,17 @@ app.use("/api/subjects", subjectsRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/departments", departmentsRouter);
 
-const apiRouter = express.Router();
-app.use("/api", apiRouter);
-
 (async () => {
   try {
     const routesModule = await import("./routes/routes.js");
     if (routesModule && typeof routesModule.RegisterRoutes === "function") {
+      const apiRouter = express.Router();
+      app.use("/api", apiRouter);
+
       routesModule.RegisterRoutes(apiRouter);
     }
   } catch (err) {
+    console.error("Failed to register TSOA routes:", err);
   }
 })();
 
@@ -90,7 +91,7 @@ app.use((err: any, req: any, res: any, next: any) => {
     err?.status ||
     err?.statusCode ||
     (res?.statusCode && res.statusCode >= 400 ? res.statusCode : 500);
-    
+
   res.status(status).json({ error: err?.message ?? "Internal Server Error" });
 });
 
