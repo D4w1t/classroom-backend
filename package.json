@@ -1,7 +1,7 @@
 {
-  "name": "classroom-backend",
+  "name": "classroom",
   "version": "1.0.0",
-  "description": "PERN Stack Classroom management App",
+  "description": "Classroom management app backend built with PERN stack",
   "license": "ISC",
   "author": "Dawit Nigussie",
   "type": "module",
@@ -13,7 +13,10 @@
     "start": "node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "tsoa:spec": "tsoa spec",
+    "tsoa:routes": "tsoa routes",
+    "generate:openapi": "npm run tsoa:spec && npm run tsoa:routes"
   },
   "dependencies": {
     "@arcjet/inspect": "^1.0.0-beta.17",
@@ -24,12 +27,15 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.1",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "swagger-ui-express": "^5.0.1",
+    "tsoa": "^7.0.0-alpha.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.0.9",
+    "@types/swagger-ui-express": "^4.1.8",
     "drizzle-kit": "^0.31.8",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"

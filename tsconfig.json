@@ -20,6 +20,8 @@
     /* Interop & correctness */
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
 
     /* Build output */
     "sourceMap": true,
@@ -28,7 +30,10 @@
     "skipLibCheck": true,
 
     /* Environment types */
-    "types": ["node"]
+    "types": ["node"],
+
+    /* JSON module support */
+    "resolveJsonModule": true
   },
   "include": ["src"]
 }
