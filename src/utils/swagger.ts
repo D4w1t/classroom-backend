@@ -28,7 +28,17 @@ const setupSwagger = (app: Express, port: number | string) => {
   }
 
   // Serve Swagger UI
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  app.use(
+    "/api-docs",
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerSpec, {
+      swaggerOptions: {
+        defaultModelsExpandDepth: -1,
+        docExpansion: "none",
+        tagsSorter: "alpha",
+      },
+    }),
+  );
 
   // Serve Swagger JSON
   app.get("/api-docs.json", (req: Request, res: Response) => {

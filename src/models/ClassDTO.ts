@@ -25,11 +25,11 @@ export interface ClassItem {
   capacity: number;
   status: ClassStatus;
   schedules: any[];
-  createdAt: string;
-  updatedAt: string;
-  subject?: SubjectSummary;
-  teacher?: TeacherSummary;
-  department?: DepartmentSummary;
+  createdAt: Date;
+  updatedAt: Date;
+  subject?: SubjectSummary | null;
+  teacher?: TeacherSummary | null;
+  department?: DepartmentSummary | null;
 }
 
 export interface Pagination {

@@ -1,14 +1,22 @@
-import express from "express";
 import { desc, eq, getTableColumns, sql } from "drizzle-orm";
+import { Controller, Get, Query, Route, SuccessResponse, Tags } from "tsoa";
 
-import { db } from "../db/index.js";
 import { classes, departments, subjects, user } from "../db/schema/index.js";
+import { db } from "../db/index.js";
 
-const router = express.Router();
+import {
+  ChartsResponse,
+  LatestStatsResponse,
+  statsItem,
+  StatsResponse,
+} from "../models/StatsDTO.js";
 
-// Get overall stats
-router.get("/", async (req, res) => {
-  try {
+@Route("stats")
+@Tags("Statistics")
+export class StatsController extends Controller {
+  @Get("/")
+  @SuccessResponse("200", "OK")
+  public async getStats(): Promise<StatsResponse> {
     const [
       usersCount,
       teachersCount,
@@ -31,7 +39,8 @@ router.get("/", async (req, res) => {
       db.select({ count: sql<number>`count(*)` }).from(classes),
     ]);
 
-    res.status(200).json({
+    this.setStatus(200);
+    return {
       data: {
         users: usersCount[0]?.count ?? 0,
         teachers: teachersCount[0]?.count ?? 0,
@@ -39,19 +48,13 @@ router.get("/", async (req, res) => {
         subjects: subjectsCount[0]?.count ?? 0,
         departments: departmentsCount[0]?.count ?? 0,
         classes: classesCount[0]?.count ?? 0,
-      },
-    });
-  } catch (error) {
-    console.error(`Error GET /stats: ${error}`);
-    res.status(500).json({ error: "Error fetching stats" });
+      } as unknown as statsItem,
+    };
   }
-});
 
-// Get latest classes and teachers
-router.get("/latest", async (req, res) => {
-  try {
-    const { limit = 5 } = req.query;
-
+  @Get("/latest")
+  @SuccessResponse("200", "OK")
+  public async getLatest(@Query() limit = 5): Promise<LatestStatsResponse> {
     const limitPerPage = Math.min(100, Math.max(1, Number(limit) || 5));
 
     const [latestClasses, latestTeachers] = await Promise.all([
@@ -64,10 +67,14 @@ router.get("/latest", async (req, res) => {
           teacher: {
             ...getTableColumns(user),
           },
+          department: {
+            ...getTableColumns(departments),
+          },
         })
         .from(classes)
         .leftJoin(subjects, eq(classes.subjectId, subjects.id))
         .leftJoin(user, eq(classes.teacherId, user.id))
+        .leftJoin(departments, eq(subjects.departmentId, departments.id))
         .orderBy(desc(classes.createdAt))
         .limit(limitPerPage),
       db
@@ -78,21 +85,15 @@ router.get("/latest", async (req, res) => {
         .limit(limitPerPage),
     ]);
 
-    res.status(200).json({
-      data: {
-        latestClasses,
-        latestTeachers,
-      },
-    });
-  } catch (error) {
-    console.error(`Error GET /latest: ${error}`);
-    res.status(500).json({ error: "Error fetching latest stats" });
+    this.setStatus(200);
+    return {
+      data: { latestClasses, latestTeachers },
+    };
   }
-});
 
-// Get data for charts
-router.get("/charts", async (req, res) => {
-  try {
+  @Get("/charts")
+  @SuccessResponse("200", "OK")
+  public async getCharts(): Promise<ChartsResponse> {
     const [usersByRole, subjectsByDepartment, classesBySubject] =
       await Promise.all([
         db
@@ -119,17 +120,13 @@ router.get("/charts", async (req, res) => {
           .groupBy(subjects.id),
       ]);
 
-    res.status(200).json({
+    this.setStatus(200);
+    return {
       data: {
         usersByRole,
         subjectsByDepartment,
         classesBySubject,
       },
-    });
-  } catch (error) {
-    console.error(`Error GET /charts: ${error}`);
-    res.status(500).json({ error: "Error fetching charts data" });
+    };
   }
-});
-
-export default router;
+}
