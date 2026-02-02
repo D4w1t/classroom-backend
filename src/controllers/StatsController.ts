@@ -13,7 +13,7 @@ import {
 
 @Route("stats")
 @Tags("Statistics")
-export class StatsControllet extends Controller {
+export class StatsController extends Controller {
   @Get("/")
   @SuccessResponse("200", "OK")
   public async getStats(): Promise<StatsResponse> {

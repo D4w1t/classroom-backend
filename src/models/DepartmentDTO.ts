@@ -7,7 +7,7 @@ export interface departmentItem {
   description?: string;
   createdAt: string;
   updatedAt: string;
-  totalSubjects?: string;
+  totalSubjects?: number;
 }
 
 export interface DepartmentsResponse {

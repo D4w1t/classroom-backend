@@ -53,7 +53,7 @@ export class DepartmentsController extends Controller {
       .from(departments)
       .where(whereClause);
 
-    const totalCount = countResult[0]?.count ?? 0;
+    const totalCount = Number(countResult[0]?.count ?? 0);
 
     const departmentsList = await db
       .select({
