@@ -1,23 +1,27 @@
+import { Controller, Get, Query, Route, SuccessResponse, Tags } from "tsoa";
 import { and, desc, eq, getTableColumns, ilike, or, sql } from "drizzle-orm";
-import express from "express";
+
+import { subjectItem, subjectResponse } from "../models/subjectDTO.js";
 import { departments, subjects } from "../db/schema/index.js";
 import { db } from "../db/index.js";
 
-const router = express.Router();
-
-// Get All Subject with optional search, filtering and pagination
-router.get("/", async (req, res) => {
-  try {
-    const { search, department, limit = 10, page = 1 } = req.query;
-
+@Route("subjects")
+@Tags("Subjects")
+export class SubjectsController extends Controller {
+  @Get("/")
+  @SuccessResponse("200", "OK")
+  public async getSubjects(
+    @Query() search?: string,
+    @Query() department?: string,
+    @Query() limit = 10,
+    @Query() page = 1,
+  ): Promise<subjectResponse> {
     const currentPage = Math.max(1, Number(page) || 1);
     const limitPerPage = Math.min(100, Math.max(1, Number(limit) || 10));
-
     const offset = (currentPage - 1) * limitPerPage;
 
-    const filterConditions = [];
+    const filterConditions: any[] = [];
 
-    // Search by subject name or subject code
     if (search) {
       filterConditions.push(
         or(
@@ -27,12 +31,10 @@ router.get("/", async (req, res) => {
       );
     }
 
-    // Filter by department name
     if (department) {
       filterConditions.push(ilike(departments.name, `%${department}%`));
     }
 
-    // Combine all filters
     const whereClause =
       filterConditions.length > 0 ? and(...filterConditions) : undefined;
 
@@ -56,19 +58,15 @@ router.get("/", async (req, res) => {
       .limit(limitPerPage)
       .offset(offset);
 
-    res.status(200).json({
-      data: subjectList,
+    this.setStatus(200);
+    return {
+      data: subjectList as unknown as subjectItem[],
       pagination: {
         page: currentPage,
         limit: limitPerPage,
         total: totalCount,
         totalPages: Math.ceil(totalCount / limitPerPage),
       },
-    });
-  } catch (error) {
-    console.error(`Error GET /subjects: ${error}`);
-    res.status(500).json({ error: "Error fetching subjects" });
+    };
   }
-});
-
-export default router;
+}

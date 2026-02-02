@@ -5,11 +5,6 @@ import express from "express";
 import cors from "cors";
 import { toNodeHandler } from "better-auth/node";
 
-import subjectsRouter from "./routes/subjects.js";
-import usersRouter from "./routes/users.js";
-import departmentsRouter from "./routes/departments.js";
-import statsRouter from "./routes/stats.js";
-
 import securityMiddleware from "./middleware/security.js";
 
 import { auth } from "./lib/auth.js";
@@ -67,11 +62,6 @@ app.all("/api/auth/*splat", toNodeHandler(auth));
 app.get("/", (req, res) => {
   res.send("Hello, Welcome to Classroom API");
 });
-
-app.use("/api/subjects", subjectsRouter);
-app.use("/api/users", usersRouter);
-app.use("/api/departments", departmentsRouter);
-app.use("/api/stats", statsRouter);
 
 (async () => {
   try {

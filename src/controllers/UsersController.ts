@@ -1,18 +1,31 @@
-import { and, desc, getTableColumns, ilike, or, sql, eq } from "drizzle-orm";
-import express from "express";
+import { and, desc, eq, getTableColumns, ilike, or, sql } from "drizzle-orm";
+import {
+  Controller,
+  Get,
+  Query,
+  Route,
+  SuccessResponse,
+  Tags,
+  Response,
+} from "tsoa";
+
 import { user } from "../db/schema/index.js";
 import { db } from "../db/index.js";
+import { userItem, UsersResponse } from "../models/UserDTO.js";
 
-const router = express.Router();
-
-// Get All Users with optional search, role filter and pagination
-router.get("/", async (req, res) => {
-  try {
-    const { search, role: roleQuery, limit = 10, page = 1 } = req.query;
-
-    // Normalize role param
-    const role = Array.isArray(roleQuery) ? roleQuery[0] : roleQuery;
-    const allowedRoles = ['student', 'teacher', 'admin'] as const;
+@Route("users")
+@Tags("Users")
+export class UsersController extends Controller {
+  @Get("/")
+  @SuccessResponse("200", "OK")
+  @Response(400, "Bad Request")
+  public async getUsers(
+    @Query() search?: string,
+    @Query() role?: string,
+    @Query() limit = 10,
+    @Query() page = 1,
+  ): Promise<UsersResponse | { error: string }> {
+    const allowedRoles = ["student", "teacher", "admin"] as const;
     type Role = (typeof allowedRoles)[number];
 
     const currentPage = Math.max(1, Number(page) || 1);
@@ -22,19 +35,23 @@ router.get("/", async (req, res) => {
 
     const filterConditions: any[] = [];
 
-    // Search by user name or email
     if (search) {
       filterConditions.push(
         or(ilike(user.name, `%${search}%`), ilike(user.email, `%${search}%`)),
       );
     }
 
-    // Filter by exact role (ensure it's one of allowed enum values)
+    if (role && !allowedRoles.includes(role as Role)) {
+      this.setStatus(400);
+      return {
+        error: "Invalid role parameter. Allowed roles: student, teacher, admin",
+      };
+    }
+
     if (role && allowedRoles.includes(role as Role)) {
       filterConditions.push(eq(user.role, role as Role));
     }
 
-    // Combine all filters
     const whereClause =
       filterConditions.length > 0 ? and(...filterConditions) : undefined;
 
@@ -53,19 +70,15 @@ router.get("/", async (req, res) => {
       .limit(limitPerPage)
       .offset(offset);
 
-    res.status(200).json({
-      data: userList,
+    this.setStatus(200);
+    return {
+      data: userList as unknown as userItem[],
       pagination: {
         page: currentPage,
         limit: limitPerPage,
         total: totalCount,
         totalPages: Math.ceil(totalCount / limitPerPage),
       },
-    });
-  } catch (error) {
-    console.error(`Error GET /users: ${error}`);
-    res.status(500).json({ error: "Error fetching users" });
+    };
   }
-});
-
-export default router;
+}
