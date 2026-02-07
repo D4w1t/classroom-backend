@@ -86,14 +86,14 @@ export const enrollments = pgTable(
 
     ...timestamps,
   },
-  (table) => ({
-    studentIdIdx: index("enrollments_student_id_idx").on(table.studentId),
-    classIdIdx: index("enrollments_class_id_idx").on(table.classId),
-    studentClassUnique: index("enrollments_student_class_unique").on(
+  (table) => [
+    index("enrollments_student_id_idx").on(table.studentId),
+    index("enrollments_class_id_idx").on(table.classId),
+    unique("enrollments_student_class_unique").on(
       table.studentId,
       table.classId,
     ),
-  }),
+  ],
 );
 
 // One department has many subjects

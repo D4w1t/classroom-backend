@@ -101,8 +101,8 @@ export class UsersController extends Controller {
   public async getUserById(
     @Path() id: string,
   ): Promise<
-    | StudentDetailResponse
     | TeacherDetailResponse
+    | StudentDetailResponse
     | { data: { user: userItem } }
     | { error: string }
   > {

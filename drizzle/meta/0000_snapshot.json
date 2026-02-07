@@ -1,5 +1,5 @@
 {
-  "id": "f0c72594-58b0-4735-bf9a-c8d06d1e9111",
+  "id": "ca805af5-171d-40e9-9bc6-53583f050a56",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -326,27 +326,6 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
-        },
-        "enrollments_student_class_unique": {
-          "name": "enrollments_student_class_unique",
-          "columns": [
-            {
-              "expression": "student_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "class_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
         }
       },
       "foreignKeys": {
@@ -378,7 +357,16 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "enrollments_student_class_unique": {
+          "name": "enrollments_student_class_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "student_id",
+            "class_id"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -519,8 +507,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "accces_token_expires_at": {
-          "name": "accces_token_expires_at",
+        "access_token_expires_at": {
+          "name": "access_token_expires_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false

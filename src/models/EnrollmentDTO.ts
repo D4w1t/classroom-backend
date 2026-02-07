@@ -1,7 +1,7 @@
-import type { ClassItem } from "./ClassDTO";
-import type { subjectItem } from "./SubjectDTO";
-import type { departmentItem } from "./DepartmentDTO";
-import type { userItem } from "./UserDTO";
+import type { ClassItem } from "./ClassDTO.js";
+import type { subjectItem } from "./SubjectDTO.js";
+import type { departmentItem } from "./DepartmentDTO.js";
+import type { userItem } from "./UserDTO.js";
 
 export interface EnrollmentItem {
   id: number;

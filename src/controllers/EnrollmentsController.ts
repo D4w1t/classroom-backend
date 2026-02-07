@@ -9,7 +9,7 @@ import {
   Post,
   Body,
 } from "tsoa";
-import { db } from "../db";
+import { db } from "../db/index.js";
 import { and, eq, getTableColumns } from "drizzle-orm";
 import {
   classes,
@@ -17,14 +17,14 @@ import {
   enrollments,
   subjects,
   user,
-} from "../db/schema";
+} from "../db/schema/index.js";
 import {
   CreateEnrollmentRequest,
   CreateEnrollmentResponse,
   EnrollmentResponse,
   JoinEnrollmentRequest,
   JoinEnrollmentResponse,
-} from "../models/EnrollmentDTO";
+} from "../models/EnrollmentDTO.js";
 
 @Route("enrollments")
 @Tags("Enrollments")
@@ -36,9 +36,32 @@ export class EnrollmentsController extends Controller {
   public async getEnrollmentById(
     @Path() id: number,
   ): Promise<EnrollmentResponse | { error: string }> {
+    const result = await this.fetchEnrollmentById(id);
+    if ("error" in result) {
+      if (result.error === "Invalid enrollment ID") {
+        this.setStatus(400);
+      } else if (result.error === "Enrollment not found") {
+        this.setStatus(404);
+      } else {
+        this.setStatus(500);
+      }
+      return { error: result.error };
+    }
+
+    this.setStatus(200);
+    return {
+      data: {
+        enrollmentDetails: result.enrollmentDetails,
+      },
+    };
+  }
+
+  // Helper: fetches enrollment details from DB
+  private async fetchEnrollmentById(
+    id: number,
+  ): Promise<{ enrollmentDetails: any } | { error: string }> {
     const enrollmentId = Number(id);
     if (!Number.isFinite(enrollmentId)) {
-      this.setStatus(400);
       return { error: "Invalid enrollment ID" };
     }
 
@@ -66,16 +89,10 @@ export class EnrollmentsController extends Controller {
       .where(eq(enrollments.id, enrollmentId));
 
     if (!enrollmentDetails) {
-      this.setStatus(404);
       return { error: "Enrollment not found" };
     }
 
-    this.setStatus(200);
-    return {
-      data: {
-        enrollmentDetails,
-      },
-    };
+    return { enrollmentDetails };
   }
 
   @Post("/")
@@ -111,6 +128,11 @@ export class EnrollmentsController extends Controller {
       return { error: "Student Not Found" };
     }
 
+    if (student.role !== "student") {
+      this.setStatus(400);
+      return { error: "User is not a student" };
+    }
+
     const [existingEnrollment] = await db
       .select({ id: enrollments.id })
       .from(enrollments)
@@ -136,12 +158,16 @@ export class EnrollmentsController extends Controller {
       return { error: "Failed to create enrollment" };
     }
 
-    const enrollment = await this.getEnrollmentById(createdEnrollment.id);
+    const fetchResult = await this.fetchEnrollmentById(createdEnrollment.id);
+    if ("error" in fetchResult) {
+      this.setStatus(500);
+      return { error: "Failed to retrieve enrollment after creation" };
+    }
 
     this.setStatus(201);
     return {
       data: {
-        enrollmentDetails: (enrollment as any).data.enrollmentDetails,
+        enrollmentDetails: fetchResult.enrollmentDetails,
       },
     };
   }
@@ -212,12 +238,16 @@ export class EnrollmentsController extends Controller {
       };
     }
 
-    const enrollment = await this.getEnrollmentById(createdEnrollment.id);
+    const fetchResult = await this.fetchEnrollmentById(createdEnrollment.id);
+    if ("error" in fetchResult) {
+      this.setStatus(500);
+      return { error: "Failed to retrieve enrollment after creation" };
+    }
 
     this.setStatus(201);
     return {
       data: {
-        enrollmentDetails: (enrollment as any).data.enrollmentDetails,
+        enrollmentDetails: fetchResult.enrollmentDetails,
       },
     };
   }

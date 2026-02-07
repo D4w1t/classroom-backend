@@ -32,7 +32,8 @@ CREATE TABLE "enrollments" (
 	"student_id" text NOT NULL,
 	"class_id" integer NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL,
-	"updatedAt" timestamp DEFAULT now() NOT NULL
+	"updatedAt" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "enrollments_student_class_unique" UNIQUE("student_id","class_id")
 );
 --> statement-breakpoint
 CREATE TABLE "subjects" (
@@ -54,7 +55,7 @@ CREATE TABLE "account" (
 	"access_token" text,
 	"refresh_token" text,
 	"id_token" text,
-	"accces_token_expires_at" timestamp,
+	"access_token_expires_at" timestamp,
 	"refresh_token_expires_at" timestamp,
 	"scope" text,
 	"password" text,
@@ -106,7 +107,6 @@ CREATE INDEX "classes_subject_id_idx" ON "classes" USING btree ("subject_id");--
 CREATE INDEX "classes_teacher_id_idx" ON "classes" USING btree ("teacher_id");--> statement-breakpoint
 CREATE INDEX "enrollments_student_id_idx" ON "enrollments" USING btree ("student_id");--> statement-breakpoint
 CREATE INDEX "enrollments_class_id_idx" ON "enrollments" USING btree ("class_id");--> statement-breakpoint
-CREATE INDEX "enrollments_student_class_unique" ON "enrollments" USING btree ("student_id","class_id");--> statement-breakpoint
 CREATE INDEX "account_user_id_idx" ON "account" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "session_user_id_idx" ON "session" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "verification_identifer_idx" ON "verification" USING btree ("identifier");

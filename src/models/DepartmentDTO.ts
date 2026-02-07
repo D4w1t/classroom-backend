@@ -1,6 +1,5 @@
-import { ClassItem, Pagination } from "./ClassDTO";
-import { EnrollmentItem } from "./EnrollmentDTO";
-import { subjectItem } from "./SubjectDTO";
+import { ClassItem, Pagination } from "./ClassDTO.js";
+import { subjectItem } from "./SubjectDTO.js";
 
 export interface departmentItem {
   id: number;
@@ -16,12 +15,21 @@ export interface DepartmentsResponse {
   data: departmentItem[];
   pagination: Pagination;
 }
+
+export interface departmentStudentItem {
+  id: string;
+  name: string;
+  email: string;
+  image?: string | null;
+  role: "student" | "teacher" | "admin";
+}
+
 export interface DepartmentDetailResponse {
   data: {
     departmentDetails: departmentItem;
     subjects: subjectItem[];
     classes: ClassItem[];
-    enrolledStudents: EnrollmentItem[];
+    enrolledStudents: departmentStudentItem[];
     total: {
       subjects: number;
       classes: number;

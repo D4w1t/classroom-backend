@@ -153,21 +153,26 @@ export class SubjectsController extends Controller {
     }
     const { code, name, departmentId, description } = body;
 
-    const [createdSubject] = await db
-      .insert(subjects)
-      .values({ departmentId, name, code, description })
-      .returning({ id: subjects.id });
+    try {
+      const [createdSubject] = await db
+        .insert(subjects)
+        .values({ departmentId, name, code, description })
+        .returning({ id: subjects.id });
 
-    if (!createdSubject) {
-      this.setStatus(500);
+      if (!createdSubject) {
+        this.setStatus(500);
+        return {
+          error: "Failed to create subject",
+        };
+      }
+
+      this.setStatus(201);
       return {
-        error: "Internal Server Error: Failed to create subject",
+        data: createdSubject,
       };
+    } catch (error) {
+      this.setStatus(500);
+      return { error: "Internal Server Error" };
     }
-
-    this.setStatus(201);
-    return {
-      data: createdSubject,
-    };
   }
 }

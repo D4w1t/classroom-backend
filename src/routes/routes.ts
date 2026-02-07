@@ -144,14 +144,6 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "StudentDetailResponse": {
-        "dataType": "refObject",
-        "properties": {
-            "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"total":{"dataType":"nestedObjectLiteral","nestedProperties":{"departments":{"dataType":"double","required":true},"subjects":{"dataType":"double","required":true},"classes":{"dataType":"double","required":true}},"required":true},"departments":{"dataType":"array","array":{"dataType":"refObject","ref":"departmentItem"},"required":true},"subjects":{"dataType":"array","array":{"dataType":"refObject","ref":"subjectItem"},"required":true},"classes":{"dataType":"array","array":{"dataType":"refObject","ref":"ClassItem"},"required":true},"user":{"ref":"userItem","required":true}},"required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "EnrollmentItem": {
         "dataType": "refObject",
         "properties": {
@@ -172,6 +164,14 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"total":{"dataType":"nestedObjectLiteral","nestedProperties":{"subjects":{"dataType":"double","required":true},"classes":{"dataType":"double","required":true},"enrollments":{"dataType":"double","required":true}},"required":true},"subjects":{"dataType":"array","array":{"dataType":"refObject","ref":"subjectItem"},"required":true},"classes":{"dataType":"array","array":{"dataType":"refObject","ref":"ClassItem"},"required":true},"enrollments":{"dataType":"array","array":{"dataType":"refObject","ref":"EnrollmentItem"},"required":true},"user":{"ref":"userItem","required":true}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "StudentDetailResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"total":{"dataType":"nestedObjectLiteral","nestedProperties":{"departments":{"dataType":"double","required":true},"subjects":{"dataType":"double","required":true},"classes":{"dataType":"double","required":true}},"required":true},"departments":{"dataType":"array","array":{"dataType":"refObject","ref":"departmentItem"},"required":true},"subjects":{"dataType":"array","array":{"dataType":"refObject","ref":"subjectItem"},"required":true},"classes":{"dataType":"array","array":{"dataType":"refObject","ref":"ClassItem"},"required":true},"user":{"ref":"userItem","required":true}},"required":true},
         },
         "additionalProperties": false,
     },
@@ -347,10 +347,22 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "departmentStudentItem": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"string","required":true},
+            "name": {"dataType":"string","required":true},
+            "email": {"dataType":"string","required":true},
+            "image": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "role": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["student"]},{"dataType":"enum","enums":["teacher"]},{"dataType":"enum","enums":["admin"]}],"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "DepartmentDetailResponse": {
         "dataType": "refObject",
         "properties": {
-            "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"total":{"dataType":"nestedObjectLiteral","nestedProperties":{"enrolledStudents":{"dataType":"double","required":true},"classes":{"dataType":"double","required":true},"subjects":{"dataType":"double","required":true}},"required":true},"enrolledStudents":{"dataType":"array","array":{"dataType":"refObject","ref":"EnrollmentItem"},"required":true},"classes":{"dataType":"array","array":{"dataType":"refObject","ref":"ClassItem"},"required":true},"subjects":{"dataType":"array","array":{"dataType":"refObject","ref":"subjectItem"},"required":true},"departmentDetails":{"ref":"departmentItem","required":true}},"required":true},
+            "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"total":{"dataType":"nestedObjectLiteral","nestedProperties":{"enrolledStudents":{"dataType":"double","required":true},"classes":{"dataType":"double","required":true},"subjects":{"dataType":"double","required":true}},"required":true},"enrolledStudents":{"dataType":"array","array":{"dataType":"refObject","ref":"departmentStudentItem"},"required":true},"classes":{"dataType":"array","array":{"dataType":"refObject","ref":"ClassItem"},"required":true},"subjects":{"dataType":"array","array":{"dataType":"refObject","ref":"subjectItem"},"required":true},"departmentDetails":{"ref":"departmentItem","required":true}},"required":true},
         },
         "additionalProperties": false,
     },
