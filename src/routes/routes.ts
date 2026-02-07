@@ -8,7 +8,9 @@ import { UsersController } from './../controllers/UsersController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { SubjectsController } from './../controllers/SubjectsController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { StatsControllet } from './../controllers/StatsController';
+import { StatsController } from './../controllers/StatsController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { EnrollmentsController } from './../controllers/EnrollmentsController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { DepartmentsController } from './../controllers/DepartmentsController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -61,59 +63,6 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "DepartmentSummary": {
-        "dataType": "refObject",
-        "properties": {
-            "id": {"dataType":"double","required":true},
-            "name": {"dataType":"string","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "subjectItem": {
-        "dataType": "refObject",
-        "properties": {
-            "id": {"dataType":"double","required":true},
-            "code": {"dataType":"string","required":true},
-            "name": {"dataType":"string","required":true},
-            "description": {"dataType":"string"},
-            "createdAt": {"dataType":"string","required":true},
-            "updatedAt": {"dataType":"string","required":true},
-            "department": {"ref":"DepartmentSummary"},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "subjectResponse": {
-        "dataType": "refObject",
-        "properties": {
-            "data": {"dataType":"array","array":{"dataType":"refObject","ref":"subjectItem"},"required":true},
-            "pagination": {"ref":"Pagination","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "statsItem": {
-        "dataType": "refObject",
-        "properties": {
-            "users": {"dataType":"double","required":true},
-            "teachers": {"dataType":"double","required":true},
-            "admins": {"dataType":"double","required":true},
-            "subjects": {"dataType":"double","required":true},
-            "departments": {"dataType":"double","required":true},
-            "classes": {"dataType":"double","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "StatsResponse": {
-        "dataType": "refObject",
-        "properties": {
-            "data": {"ref":"statsItem","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ClassStatus": {
         "dataType": "refAlias",
         "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["active"]},{"dataType":"enum","enums":["inactive"]},{"dataType":"enum","enums":["completed"]}],"validators":{}},
@@ -137,6 +86,15 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "DepartmentSummary": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"double","required":true},
+            "name": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ClassItem": {
         "dataType": "refObject",
         "properties": {
@@ -154,6 +112,123 @@ const models: TsoaRoute.Models = {
             "subject": {"dataType":"union","subSchemas":[{"ref":"SubjectSummary"},{"dataType":"enum","enums":[null]}]},
             "teacher": {"dataType":"union","subSchemas":[{"ref":"TeacherSummary"},{"dataType":"enum","enums":[null]}]},
             "department": {"dataType":"union","subSchemas":[{"ref":"DepartmentSummary"},{"dataType":"enum","enums":[null]}]},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "subjectItem": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"double","required":true},
+            "code": {"dataType":"string","required":true},
+            "name": {"dataType":"string","required":true},
+            "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "createdAt": {"dataType":"datetime","required":true},
+            "updatedAt": {"dataType":"datetime","required":true},
+            "department": {"dataType":"union","subSchemas":[{"ref":"DepartmentSummary"},{"dataType":"enum","enums":[null]}]},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "departmentItem": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"double","required":true},
+            "code": {"dataType":"string","required":true},
+            "name": {"dataType":"string","required":true},
+            "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "createdAt": {"dataType":"datetime","required":true},
+            "updatedAt": {"dataType":"datetime","required":true},
+            "totalSubjects": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}]},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "EnrollmentItem": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"double","required":true},
+            "classId": {"dataType":"double","required":true},
+            "studentId": {"dataType":"string","required":true},
+            "createdAt": {"dataType":"datetime","required":true},
+            "updatedAt": {"dataType":"datetime","required":true},
+            "class": {"dataType":"union","subSchemas":[{"ref":"ClassItem"},{"dataType":"enum","enums":[null]}]},
+            "subject": {"dataType":"union","subSchemas":[{"ref":"subjectItem"},{"dataType":"enum","enums":[null]}]},
+            "department": {"dataType":"union","subSchemas":[{"ref":"departmentItem"},{"dataType":"enum","enums":[null]}]},
+            "teacher": {"dataType":"union","subSchemas":[{"ref":"userItem"},{"dataType":"enum","enums":[null]}]},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TeacherDetailResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"total":{"dataType":"nestedObjectLiteral","nestedProperties":{"subjects":{"dataType":"double","required":true},"classes":{"dataType":"double","required":true},"enrollments":{"dataType":"double","required":true}},"required":true},"subjects":{"dataType":"array","array":{"dataType":"refObject","ref":"subjectItem"},"required":true},"classes":{"dataType":"array","array":{"dataType":"refObject","ref":"ClassItem"},"required":true},"enrollments":{"dataType":"array","array":{"dataType":"refObject","ref":"EnrollmentItem"},"required":true},"user":{"ref":"userItem","required":true}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "StudentDetailResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"total":{"dataType":"nestedObjectLiteral","nestedProperties":{"departments":{"dataType":"double","required":true},"subjects":{"dataType":"double","required":true},"classes":{"dataType":"double","required":true}},"required":true},"departments":{"dataType":"array","array":{"dataType":"refObject","ref":"departmentItem"},"required":true},"subjects":{"dataType":"array","array":{"dataType":"refObject","ref":"subjectItem"},"required":true},"classes":{"dataType":"array","array":{"dataType":"refObject","ref":"ClassItem"},"required":true},"user":{"ref":"userItem","required":true}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "subjectResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "data": {"dataType":"array","array":{"dataType":"refObject","ref":"subjectItem"},"required":true},
+            "pagination": {"ref":"Pagination","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "subjectDetailsResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"total":{"dataType":"nestedObjectLiteral","nestedProperties":{"classes":{"dataType":"double","required":true}},"required":true},"classes":{"dataType":"array","array":{"dataType":"refObject","ref":"ClassItem"},"required":true},"subjectDetails":{"ref":"subjectItem","required":true}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SubjectCreateResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"double","required":true}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SubjectCreateRequest": {
+        "dataType": "refObject",
+        "properties": {
+            "name": {"dataType":"string","required":true},
+            "code": {"dataType":"string","required":true},
+            "departmentId": {"dataType":"double","required":true},
+            "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "statsItem": {
+        "dataType": "refObject",
+        "properties": {
+            "users": {"dataType":"double","required":true},
+            "teachers": {"dataType":"double","required":true},
+            "admins": {"dataType":"double","required":true},
+            "subjects": {"dataType":"double","required":true},
+            "departments": {"dataType":"double","required":true},
+            "classes": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "StatsResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "data": {"ref":"statsItem","required":true},
         },
         "additionalProperties": false,
     },
@@ -203,16 +278,44 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "departmentItem": {
+    "EnrollmentResponse": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"double","required":true},
-            "code": {"dataType":"string","required":true},
-            "name": {"dataType":"string","required":true},
-            "description": {"dataType":"string"},
-            "createdAt": {"dataType":"string","required":true},
-            "updatedAt": {"dataType":"string","required":true},
-            "totalSubjects": {"dataType":"string"},
+            "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"enrollmentDetails":{"ref":"EnrollmentItem","required":true}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CreateEnrollmentResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"enrollmentDetails":{"ref":"EnrollmentItem","required":true}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CreateEnrollmentRequest": {
+        "dataType": "refObject",
+        "properties": {
+            "classId": {"dataType":"double","required":true},
+            "studentId": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "JoinEnrollmentResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"enrollmentDetails":{"ref":"EnrollmentItem","required":true}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "JoinEnrollmentRequest": {
+        "dataType": "refObject",
+        "properties": {
+            "inviteCode": {"dataType":"string","required":true},
+            "studentId": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -240,6 +343,26 @@ const models: TsoaRoute.Models = {
             "name": {"dataType":"string","required":true},
             "code": {"dataType":"string","required":true},
             "description": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "departmentStudentItem": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"string","required":true},
+            "name": {"dataType":"string","required":true},
+            "email": {"dataType":"string","required":true},
+            "image": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "role": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["student"]},{"dataType":"enum","enums":["teacher"]},{"dataType":"enum","enums":["admin"]}],"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "DepartmentDetailResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"total":{"dataType":"nestedObjectLiteral","nestedProperties":{"enrolledStudents":{"dataType":"double","required":true},"classes":{"dataType":"double","required":true},"subjects":{"dataType":"double","required":true}},"required":true},"enrolledStudents":{"dataType":"array","array":{"dataType":"refObject","ref":"departmentStudentItem"},"required":true},"classes":{"dataType":"array","array":{"dataType":"refObject","ref":"ClassItem"},"required":true},"subjects":{"dataType":"array","array":{"dataType":"refObject","ref":"subjectItem"},"required":true},"departmentDetails":{"ref":"departmentItem","required":true}},"required":true},
         },
         "additionalProperties": false,
     },
@@ -335,6 +458,36 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUsersController_getUserById: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.get('/users/:id',
+            ...(fetchMiddlewares<RequestHandler>(UsersController)),
+            ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.getUserById)),
+
+            async function UsersController_getUserById(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsUsersController_getUserById, request, response });
+
+                const controller = new UsersController();
+
+              await templateService.apiHandler({
+                methodName: 'getUserById',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsSubjectsController_getSubjects: Record<string, TsoaRoute.ParameterSchema> = {
                 search: {"in":"query","name":"search","dataType":"string"},
                 department: {"in":"query","name":"department","dataType":"string"},
@@ -368,21 +521,81 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsStatsControllet_getStats: Record<string, TsoaRoute.ParameterSchema> = {
+        const argsSubjectsController_getSubjectById: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"double"},
         };
-        app.get('/stats',
-            ...(fetchMiddlewares<RequestHandler>(StatsControllet)),
-            ...(fetchMiddlewares<RequestHandler>(StatsControllet.prototype.getStats)),
+        app.get('/subjects/:id',
+            ...(fetchMiddlewares<RequestHandler>(SubjectsController)),
+            ...(fetchMiddlewares<RequestHandler>(SubjectsController.prototype.getSubjectById)),
 
-            async function StatsControllet_getStats(request: ExRequest, response: ExResponse, next: any) {
+            async function SubjectsController_getSubjectById(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsStatsControllet_getStats, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsSubjectsController_getSubjectById, request, response });
 
-                const controller = new StatsControllet();
+                const controller = new SubjectsController();
+
+              await templateService.apiHandler({
+                methodName: 'getSubjectById',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsSubjectsController_createSubject: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"SubjectCreateRequest"},
+        };
+        app.post('/subjects',
+            ...(fetchMiddlewares<RequestHandler>(SubjectsController)),
+            ...(fetchMiddlewares<RequestHandler>(SubjectsController.prototype.createSubject)),
+
+            async function SubjectsController_createSubject(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsSubjectsController_createSubject, request, response });
+
+                const controller = new SubjectsController();
+
+              await templateService.apiHandler({
+                methodName: 'createSubject',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 201,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsStatsController_getStats: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/stats',
+            ...(fetchMiddlewares<RequestHandler>(StatsController)),
+            ...(fetchMiddlewares<RequestHandler>(StatsController.prototype.getStats)),
+
+            async function StatsController_getStats(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsStatsController_getStats, request, response });
+
+                const controller = new StatsController();
 
               await templateService.apiHandler({
                 methodName: 'getStats',
@@ -397,22 +610,22 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsStatsControllet_getLatest: Record<string, TsoaRoute.ParameterSchema> = {
+        const argsStatsController_getLatest: Record<string, TsoaRoute.ParameterSchema> = {
                 limit: {"default":5,"in":"query","name":"limit","dataType":"double"},
         };
         app.get('/stats/latest',
-            ...(fetchMiddlewares<RequestHandler>(StatsControllet)),
-            ...(fetchMiddlewares<RequestHandler>(StatsControllet.prototype.getLatest)),
+            ...(fetchMiddlewares<RequestHandler>(StatsController)),
+            ...(fetchMiddlewares<RequestHandler>(StatsController.prototype.getLatest)),
 
-            async function StatsControllet_getLatest(request: ExRequest, response: ExResponse, next: any) {
+            async function StatsController_getLatest(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsStatsControllet_getLatest, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsStatsController_getLatest, request, response });
 
-                const controller = new StatsControllet();
+                const controller = new StatsController();
 
               await templateService.apiHandler({
                 methodName: 'getLatest',
@@ -427,21 +640,21 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsStatsControllet_getCharts: Record<string, TsoaRoute.ParameterSchema> = {
+        const argsStatsController_getCharts: Record<string, TsoaRoute.ParameterSchema> = {
         };
         app.get('/stats/charts',
-            ...(fetchMiddlewares<RequestHandler>(StatsControllet)),
-            ...(fetchMiddlewares<RequestHandler>(StatsControllet.prototype.getCharts)),
+            ...(fetchMiddlewares<RequestHandler>(StatsController)),
+            ...(fetchMiddlewares<RequestHandler>(StatsController.prototype.getCharts)),
 
-            async function StatsControllet_getCharts(request: ExRequest, response: ExResponse, next: any) {
+            async function StatsController_getCharts(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsStatsControllet_getCharts, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsStatsController_getCharts, request, response });
 
-                const controller = new StatsControllet();
+                const controller = new StatsController();
 
               await templateService.apiHandler({
                 methodName: 'getCharts',
@@ -450,6 +663,96 @@ export function RegisterRoutes(app: Router) {
                 next,
                 validatedArgs,
                 successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsEnrollmentsController_getEnrollmentById: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"double"},
+        };
+        app.get('/enrollments/:id',
+            ...(fetchMiddlewares<RequestHandler>(EnrollmentsController)),
+            ...(fetchMiddlewares<RequestHandler>(EnrollmentsController.prototype.getEnrollmentById)),
+
+            async function EnrollmentsController_getEnrollmentById(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsEnrollmentsController_getEnrollmentById, request, response });
+
+                const controller = new EnrollmentsController();
+
+              await templateService.apiHandler({
+                methodName: 'getEnrollmentById',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsEnrollmentsController_createEnrollment: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"CreateEnrollmentRequest"},
+        };
+        app.post('/enrollments',
+            ...(fetchMiddlewares<RequestHandler>(EnrollmentsController)),
+            ...(fetchMiddlewares<RequestHandler>(EnrollmentsController.prototype.createEnrollment)),
+
+            async function EnrollmentsController_createEnrollment(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsEnrollmentsController_createEnrollment, request, response });
+
+                const controller = new EnrollmentsController();
+
+              await templateService.apiHandler({
+                methodName: 'createEnrollment',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 201,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsEnrollmentsController_joinEnrollment: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"JoinEnrollmentRequest"},
+        };
+        app.post('/enrollments/join',
+            ...(fetchMiddlewares<RequestHandler>(EnrollmentsController)),
+            ...(fetchMiddlewares<RequestHandler>(EnrollmentsController.prototype.joinEnrollment)),
+
+            async function EnrollmentsController_joinEnrollment(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsEnrollmentsController_joinEnrollment, request, response });
+
+                const controller = new EnrollmentsController();
+
+              await templateService.apiHandler({
+                methodName: 'joinEnrollment',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 201,
               });
             } catch (err) {
                 return next(err);
@@ -512,6 +815,36 @@ export function RegisterRoutes(app: Router) {
                 next,
                 validatedArgs,
                 successStatus: 201,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsDepartmentsController_getDepartmentById: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"double"},
+        };
+        app.get('/departments/:id',
+            ...(fetchMiddlewares<RequestHandler>(DepartmentsController)),
+            ...(fetchMiddlewares<RequestHandler>(DepartmentsController.prototype.getDepartmentById)),
+
+            async function DepartmentsController_getDepartmentById(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsDepartmentsController_getDepartmentById, request, response });
+
+                const controller = new DepartmentsController();
+
+              await templateService.apiHandler({
+                methodName: 'getDepartmentById',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
               });
             } catch (err) {
                 return next(err);

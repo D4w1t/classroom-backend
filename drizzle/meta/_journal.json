@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1768656849390,
-      "tag": "0000_absurd_makkari",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1768809415368,
-      "tag": "0001_bizarre_whistler",
+      "when": 1770492598331,
+      "tag": "0000_big_william_stryker",
       "breakpoints": true
     }
   ]

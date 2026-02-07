@@ -9,13 +9,21 @@ import {
   SuccessResponse,
   Response,
   Tags,
+  Path,
 } from "tsoa";
 
-import { departments, subjects } from "../db/schema/index.js";
+import {
+  classes,
+  departments,
+  enrollments,
+  subjects,
+  user,
+} from "../db/schema/index.js";
 import { db } from "../db/index.js";
 import {
   CreateDepartmentRequest,
   CreateDepartmentResponse,
+  DepartmentDetailResponse,
   departmentItem,
   DepartmentsResponse,
 } from "../models/DepartmentDTO.js";
@@ -126,5 +134,97 @@ export class DepartmentsController extends Controller {
       this.setStatus(500);
       return { error: "Internal Server Error" };
     }
+  }
+
+  @Get("/{id}")
+  @SuccessResponse("200", "Ok")
+  @Response(400, "Bad Request")
+  @Response(404, "Not Found")
+  public async getDepartmentById(
+    @Path() id: number,
+  ): Promise<DepartmentDetailResponse | { error: string }> {
+    const departmentId = Number(id);
+    if (!Number.isFinite(departmentId)) {
+      this.setStatus(400);
+      return { error: "Invalid department ID" };
+    }
+
+    const [departmentDetails] = await db
+      .select({
+        ...getTableColumns(departments),
+        totalSubjects: sql<number>`count(${subjects.id})`,
+      })
+      .from(departments)
+      .leftJoin(subjects, eq(subjects.departmentId, departments.id))
+      .where(eq(departments.id, departmentId))
+      .groupBy(departments.id);
+
+    if (!departmentDetails) {
+      this.setStatus(404);
+      return { error: "Department not found" };
+    }
+
+    const [subjectList, classList, enrolledStudents] = await Promise.all([
+      db
+        .select({
+          ...getTableColumns(subjects),
+          totalClasses: sql<number>`count(${classes.id})`,
+        })
+        .from(subjects)
+        .leftJoin(classes, eq(classes.subjectId, subjects.id))
+        .where(eq(subjects.departmentId, departmentId))
+        .groupBy(subjects.id)
+        .orderBy(desc(subjects.createdAt)),
+      db
+        .select({
+          ...getTableColumns(classes),
+          subject: {
+            ...getTableColumns(subjects),
+          },
+          teacher: {
+            ...getTableColumns(user),
+          },
+        })
+        .from(classes)
+        .leftJoin(subjects, eq(classes.subjectId, subjects.id))
+        .leftJoin(user, eq(classes.teacherId, user.id))
+        .where(eq(subjects.departmentId, departmentId))
+        .orderBy(desc(classes.createdAt)),
+      db
+        .select({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+          role: user.role,
+        })
+        .from(user)
+        .leftJoin(enrollments, eq(user.id, enrollments.studentId))
+        .leftJoin(classes, eq(enrollments.classId, classes.id))
+        .leftJoin(subjects, eq(classes.subjectId, subjects.id))
+        .where(
+          and(
+            eq(user.role, "student"),
+            eq(subjects.departmentId, departmentId),
+          ),
+        )
+        .groupBy(user.id, user.name, user.email, user.image, user.role)
+        .orderBy(desc(user.createdAt)),
+    ]);
+
+    this.setStatus(200);
+    return {
+      data: {
+        departmentDetails,
+        subjects: subjectList,
+        classes: classList,
+        enrolledStudents,
+        total: {
+          subjects: subjectList.length,
+          classes: classList.length,
+          enrolledStudents: enrolledStudents.length,
+        },
+      },
+    };
   }
 }
