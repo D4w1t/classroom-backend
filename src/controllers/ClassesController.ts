@@ -179,7 +179,7 @@ export class ClassesController extends Controller {
   @Response(404, "Not Found")
   public async getUsersInClass(
     @Path() id: number,
-    @Query() role?: string,
+    @Query() role: string,
     @Query() limit = 10,
     @Query() page = 1,
   ): Promise<UsersResponse | { error: string }> {

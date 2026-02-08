@@ -233,7 +233,7 @@ export class UsersController extends Controller {
   @SuccessResponse("200", "Ok")
   @Response(400, "Bad Request")
   @Response(404, "Not Found")
-  public async getSubjetctsInDepartment(
+  public async getUsersInDepartment(
     @Path() id: string,
     @Query() limit = 10,
     @Query() page = 1,

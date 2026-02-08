@@ -488,27 +488,27 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsUsersController_getSubjetctsInDepartment: Record<string, TsoaRoute.ParameterSchema> = {
+        const argsUsersController_getUsersInDepartment: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 limit: {"default":10,"in":"query","name":"limit","dataType":"double"},
                 page: {"default":1,"in":"query","name":"page","dataType":"double"},
         };
         app.get('/users/:id/departments',
             ...(fetchMiddlewares<RequestHandler>(UsersController)),
-            ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.getSubjetctsInDepartment)),
+            ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.getUsersInDepartment)),
 
-            async function UsersController_getSubjetctsInDepartment(request: ExRequest, response: ExResponse, next: any) {
+            async function UsersController_getUsersInDepartment(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsUsersController_getSubjetctsInDepartment, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsUsersController_getUsersInDepartment, request, response });
 
                 const controller = new UsersController();
 
               await templateService.apiHandler({
-                methodName: 'getSubjetctsInDepartment',
+                methodName: 'getUsersInDepartment',
                 controller,
                 response,
                 next,
@@ -947,27 +947,27 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsDepartmentsController_getSubjetctsInDepartment: Record<string, TsoaRoute.ParameterSchema> = {
+        const argsDepartmentsController_getSubjectsInDepartment: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"double"},
                 limit: {"default":10,"in":"query","name":"limit","dataType":"double"},
                 page: {"default":1,"in":"query","name":"page","dataType":"double"},
         };
         app.get('/departments/:id/subjects',
             ...(fetchMiddlewares<RequestHandler>(DepartmentsController)),
-            ...(fetchMiddlewares<RequestHandler>(DepartmentsController.prototype.getSubjetctsInDepartment)),
+            ...(fetchMiddlewares<RequestHandler>(DepartmentsController.prototype.getSubjectsInDepartment)),
 
-            async function DepartmentsController_getSubjetctsInDepartment(request: ExRequest, response: ExResponse, next: any) {
+            async function DepartmentsController_getSubjectsInDepartment(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsDepartmentsController_getSubjetctsInDepartment, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsDepartmentsController_getSubjectsInDepartment, request, response });
 
                 const controller = new DepartmentsController();
 
               await templateService.apiHandler({
-                methodName: 'getSubjetctsInDepartment',
+                methodName: 'getSubjectsInDepartment',
                 controller,
                 response,
                 next,
@@ -1013,7 +1013,7 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsDepartmentsController_getUsersInDepartment: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"double"},
-                role: {"in":"query","name":"role","dataType":"string"},
+                role: {"in":"query","name":"role","required":true,"dataType":"string"},
                 limit: {"default":10,"in":"query","name":"limit","dataType":"double"},
                 page: {"default":1,"in":"query","name":"page","dataType":"double"},
         };
@@ -1141,7 +1141,7 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsClassesController_getUsersInClass: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"double"},
-                role: {"in":"query","name":"role","dataType":"string"},
+                role: {"in":"query","name":"role","required":true,"dataType":"string"},
                 limit: {"default":10,"in":"query","name":"limit","dataType":"double"},
                 page: {"default":1,"in":"query","name":"page","dataType":"double"},
         };

@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1770495847524,
-      "tag": "0000_nebulous_sprite",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1770496186000,
-      "tag": "0001_cute_vector",
+      "when": 1770539887478,
+      "tag": "0000_flowery_leech",
       "breakpoints": true
     }
   ]

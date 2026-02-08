@@ -235,7 +235,7 @@ export class DepartmentsController extends Controller {
   @SuccessResponse("200", "Ok")
   @Response(400, "Bad Request")
   @Response(404, "Not Found")
-  public async getSubjetctsInDepartment(
+  public async getSubjectsInDepartment(
     @Path() id: number,
     @Query() limit = 10,
     @Query() page = 1,
@@ -306,7 +306,7 @@ export class DepartmentsController extends Controller {
 
     const totalCount = countResult[0]?.count ?? 0;
 
-    const classsesList = await db
+    const classesList = await db
       .select({
         ...getTableColumns(classes),
         subject: {
@@ -326,7 +326,7 @@ export class DepartmentsController extends Controller {
 
     this.setStatus(200);
     return {
-      data: classsesList,
+      data: classesList,
       pagination: {
         page: currentPage,
         limit: limitPerPage,
@@ -342,7 +342,7 @@ export class DepartmentsController extends Controller {
   @Response(404, "Not Found")
   public async getUsersInDepartment(
     @Path() id: number,
-    @Query() role?: string,
+    @Query() role: string,
     @Query() limit = 10,
     @Query() page = 1,
   ): Promise<UsersResponse | { error: string }> {

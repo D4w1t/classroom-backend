@@ -203,7 +203,7 @@ export class SubjectsController extends Controller {
 
     const totalCount = countResult[0]?.count ?? 0;
 
-    const classsesList = await db
+    const classesList = await db
       .select({
         ...getTableColumns(classes),
         teacher: {
@@ -220,9 +220,14 @@ export class SubjectsController extends Controller {
       .limit(limitPerPage)
       .offset(offset);
 
+    if (!classesList || classesList.length === 0) {
+      this.setStatus(404);
+      return { error: "No classes found for the given subject ID" };
+    }
+
     this.setStatus(200);
     return {
-      data: classsesList,
+      data: classesList,
       pagination: {
         page: currentPage,
         limit: limitPerPage,

@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { inArray } from "drizzle-orm";
 
 import { db } from "../db/index.js";
+import { auth } from "../lib/auth.js";
 import {
   account,
   classes,
@@ -103,17 +104,25 @@ const seed = async () => {
       )
       .onConflictDoNothing({ target: user.id });
 
-    await db
-      .insert(account)
-      .values(
-        data.users.map((seedUser) => ({
+    // Hash each seed user's password using the auth hasher before inserting into accounts
+    const authCtx = await auth.$context;
+
+    const accountsToInsert = await Promise.all(
+      data.users.map(async (seedUser) => {
+        const hashed = await authCtx.password.hash(seedUser.password);
+        return {
           id: `acc_${seedUser.id}`,
           userId: seedUser.id,
           accountId: seedUser.email,
           providerId: "credentials",
-          password: seedUser.password,
-        })),
-      )
+          password: hashed,
+        };
+      }),
+    );
+
+    await db
+      .insert(account)
+      .values(accountsToInsert)
       .onConflictDoNothing({ target: [account.providerId, account.accountId] });
   }
 

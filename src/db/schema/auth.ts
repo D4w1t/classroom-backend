@@ -6,6 +6,7 @@ import {
   pgTable,
   text,
   timestamp,
+  unique,
 } from "drizzle-orm/pg-core";
 
 export const roleEnum = pgEnum("role", ["student", "teacher", "admin"]);
@@ -63,7 +64,13 @@ export const account = pgTable(
     password: text("password"),
     ...timestamps,
   },
-  (table) => [index("account_user_id_idx").on(table.userId)],
+  (table) => [
+    index("account_user_id_idx").on(table.userId),
+    unique("account_provider_account_unique").on(
+      table.providerId,
+      table.accountId,
+    ),
+  ],
 );
 
 export const verification = pgTable(
