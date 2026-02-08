@@ -252,22 +252,22 @@ export class UsersController extends Controller {
       return { error: "User not found" };
     }
 
+    const currentPage = Math.max(1, Number(page) || 1);
+    const limitPerPage = Math.min(100, Math.max(1, Number(limit) || 10));
+    const offset = (currentPage - 1) * limitPerPage;
+
     if (userRecord.role !== "teacher" && userRecord.role !== "student") {
       this.setStatus(200);
       return {
         data: [],
         pagination: {
-          page: 1,
-          limit: 0,
+          page: currentPage,
+          limit: limitPerPage,
           total: 0,
           totalPages: 0,
         },
       };
     }
-
-    const currentPage = Math.max(1, Number(page) || 1);
-    const limitPerPage = Math.min(100, Math.max(1, Number(limit) || 10));
-    const offset = (currentPage - 1) * limitPerPage;
 
     const countResult =
       userRecord.role === "teacher"
@@ -364,22 +364,22 @@ export class UsersController extends Controller {
       return { error: "User not found" };
     }
 
+    const currentPage = Math.max(1, Number(page) || 1);
+    const limitPerPage = Math.min(100, Math.max(1, Number(limit) || 10));
+    const offset = (currentPage - 1) * limitPerPage;
+
     if (userRecord.role !== "teacher" && userRecord.role !== "student") {
       this.setStatus(200);
       return {
         data: [],
         pagination: {
-          page: 1,
-          limit: 0,
+          page: currentPage,
+          limit: limitPerPage,
           total: 0,
           totalPages: 0,
         },
       };
     }
-
-    const currentPage = Math.max(1, Number(page) || 1);
-    const limitPerPage = Math.min(100, Math.max(1, Number(limit) || 10));
-    const offset = (currentPage - 1) * limitPerPage;
 
     const countResult =
       userRecord.role === "teacher"

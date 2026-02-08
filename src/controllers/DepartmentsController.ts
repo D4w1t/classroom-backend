@@ -246,6 +246,16 @@ export class DepartmentsController extends Controller {
       return { error: "Invalid department Id" };
     }
 
+    const [dept] = await db
+      .select({ id: departments.id })
+      .from(departments)
+      .where(eq(departments.id, departmentId));
+
+    if (!dept) {
+      this.setStatus(404);
+      return { error: "Department not found" };
+    }
+
     const currentPage = Math.max(1, Number(page) || 1);
     const limitPerPage = Math.min(100, Math.max(1, Number(limit) || 10));
     const offset = (currentPage - 1) * limitPerPage;
@@ -292,6 +302,16 @@ export class DepartmentsController extends Controller {
     if (!Number.isFinite(departmentId)) {
       this.setStatus(400);
       return { error: "Invalid department Id" };
+    }
+
+    const [dept] = await db
+      .select({ id: departments.id })
+      .from(departments)
+      .where(eq(departments.id, departmentId));
+
+    if (!dept) {
+      this.setStatus(404);
+      return { error: "Department not found" };
     }
 
     const currentPage = Math.max(1, Number(page) || 1);
@@ -350,6 +370,16 @@ export class DepartmentsController extends Controller {
     if (!Number.isFinite(departmentId)) {
       this.setStatus(400);
       return { error: "Invalid department ID" };
+    }
+
+    const [dept] = await db
+      .select({ id: departments.id })
+      .from(departments)
+      .where(eq(departments.id, departmentId));
+
+    if (!dept) {
+      this.setStatus(404);
+      return { error: "Department not found" };
     }
 
     if (role !== "teacher" && role !== "student") {
