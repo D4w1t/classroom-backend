@@ -60,7 +60,8 @@ CREATE TABLE "account" (
 	"scope" text,
 	"password" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"update_at" timestamp DEFAULT now() NOT NULL
+	"update_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "account_provider_account_unique" UNIQUE("provider_id","account_id")
 );
 --> statement-breakpoint
 CREATE TABLE "session" (

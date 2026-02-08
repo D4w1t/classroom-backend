@@ -27,6 +27,9 @@ import {
   departmentItem,
   DepartmentsResponse,
 } from "../models/DepartmentDTO.js";
+import { subjectResponse } from "../models/SubjectDTO.js";
+import { ClassesResponse } from "../models/ClassDTO.js";
+import { UsersResponse } from "../models/UserDTO.js";
 
 @Route("departments")
 @Tags("Departments")
@@ -224,6 +227,252 @@ export class DepartmentsController extends Controller {
           classes: classList.length,
           enrolledStudents: enrolledStudents.length,
         },
+      },
+    };
+  }
+
+  @Get("/{id}/subjects")
+  @SuccessResponse("200", "Ok")
+  @Response(400, "Bad Request")
+  @Response(404, "Not Found")
+  public async getSubjectsInDepartment(
+    @Path() id: number,
+    @Query() limit = 10,
+    @Query() page = 1,
+  ): Promise<subjectResponse | { error: string }> {
+    const departmentId = Number(id);
+    if (!Number.isFinite(departmentId)) {
+      this.setStatus(400);
+      return { error: "Invalid department Id" };
+    }
+
+    const [dept] = await db
+      .select({ id: departments.id })
+      .from(departments)
+      .where(eq(departments.id, departmentId));
+
+    if (!dept) {
+      this.setStatus(404);
+      return { error: "Department not found" };
+    }
+
+    const currentPage = Math.max(1, Number(page) || 1);
+    const limitPerPage = Math.min(100, Math.max(1, Number(limit) || 10));
+    const offset = (currentPage - 1) * limitPerPage;
+
+    const countResult = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(subjects)
+      .where(eq(subjects.departmentId, departmentId));
+
+    const totalCount = countResult[0]?.count ?? 0;
+
+    const subjectsList = await db
+      .select({
+        ...getTableColumns(subjects),
+      })
+      .from(subjects)
+      .where(eq(subjects.departmentId, departmentId))
+      .orderBy(desc(subjects.createdAt))
+      .limit(limitPerPage)
+      .offset(offset);
+
+    this.setStatus(200);
+    return {
+      data: subjectsList,
+      pagination: {
+        page: currentPage,
+        limit: limitPerPage,
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / limitPerPage),
+      },
+    };
+  }
+
+  @Get("/{id}/classes")
+  @SuccessResponse("200", "Ok")
+  @Response(400, "Bad Request")
+  @Response(404, "Not Found")
+  public async getClassesInDepartment(
+    @Path() id: number,
+    @Query() limit = 10,
+    @Query() page = 1,
+  ): Promise<ClassesResponse | { error: string }> {
+    const departmentId = Number(id);
+    if (!Number.isFinite(departmentId)) {
+      this.setStatus(400);
+      return { error: "Invalid department Id" };
+    }
+
+    const [dept] = await db
+      .select({ id: departments.id })
+      .from(departments)
+      .where(eq(departments.id, departmentId));
+
+    if (!dept) {
+      this.setStatus(404);
+      return { error: "Department not found" };
+    }
+
+    const currentPage = Math.max(1, Number(page) || 1);
+    const limitPerPage = Math.min(100, Math.max(1, Number(limit) || 10));
+    const offset = (currentPage - 1) * limitPerPage;
+
+    const countResult = await db
+      .select({ count: sql<number>`count(${classes.id})` })
+      .from(classes)
+      .leftJoin(subjects, eq(subjects.id, classes.subjectId))
+      .where(eq(subjects.departmentId, departmentId));
+
+    const totalCount = countResult[0]?.count ?? 0;
+
+    const classesList = await db
+      .select({
+        ...getTableColumns(classes),
+        subject: {
+          ...getTableColumns(subjects),
+        },
+        teacher: {
+          ...getTableColumns(user),
+        },
+      })
+      .from(classes)
+      .leftJoin(subjects, eq(classes.subjectId, subjects.id))
+      .leftJoin(user, eq(classes.teacherId, user.id))
+      .where(eq(subjects.departmentId, departmentId))
+      .orderBy(desc(classes.createdAt))
+      .limit(limitPerPage)
+      .offset(offset);
+
+    this.setStatus(200);
+    return {
+      data: classesList,
+      pagination: {
+        page: currentPage,
+        limit: limitPerPage,
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / limitPerPage),
+      },
+    };
+  }
+
+  @Get("/{id}/users")
+  @SuccessResponse("200", "Ok")
+  @Response(400, "Bad Request")
+  @Response(404, "Not Found")
+  public async getUsersInDepartment(
+    @Path() id: number,
+    @Query() role: string,
+    @Query() limit = 10,
+    @Query() page = 1,
+  ): Promise<UsersResponse | { error: string }> {
+    const departmentId = Number(id);
+    if (!Number.isFinite(departmentId)) {
+      this.setStatus(400);
+      return { error: "Invalid department ID" };
+    }
+
+    const [dept] = await db
+      .select({ id: departments.id })
+      .from(departments)
+      .where(eq(departments.id, departmentId));
+
+    if (!dept) {
+      this.setStatus(404);
+      return { error: "Department not found" };
+    }
+
+    if (role !== "teacher" && role !== "student") {
+      this.setStatus(400);
+      return { error: "Invalid role" };
+    }
+
+    const currentPage = Math.max(1, Number(page) || 1);
+    const limitPerPage = Math.min(100, Math.max(1, Number(limit) || 10));
+    const offset = (currentPage - 1) * limitPerPage;
+
+    const baseSelect = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      emailVerified: user.emailVerified,
+      image: user.image,
+      role: user.role,
+      imageCldPubId: user.imageCldPubId,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+
+    const groupByFields = [
+      user.id,
+      user.name,
+      user.email,
+      user.emailVerified,
+      user.image,
+      user.role,
+      user.imageCldPubId,
+      user.createdAt,
+      user.updatedAt,
+    ];
+
+    const countResult =
+      role === "teacher"
+        ? await db
+            .select({ count: sql<number>`count(distinct ${user.id})` })
+            .from(user)
+            .leftJoin(classes, eq(user.id, classes.teacherId))
+            .leftJoin(subjects, eq(classes.subjectId, subjects.id))
+            .where(
+              and(eq(user.role, role), eq(subjects.departmentId, departmentId)),
+            )
+        : await db
+            .select({ count: sql<number>`count(distinct ${user.id})` })
+            .from(user)
+            .leftJoin(enrollments, eq(user.id, enrollments.studentId))
+            .leftJoin(classes, eq(enrollments.classId, classes.id))
+            .leftJoin(subjects, eq(classes.subjectId, subjects.id))
+            .where(
+              and(eq(user.role, role), eq(subjects.departmentId, departmentId)),
+            );
+
+    const totalCount = countResult[0]?.count ?? 0;
+
+    const usersList =
+      role === "teacher"
+        ? await db
+            .select(baseSelect)
+            .from(user)
+            .leftJoin(classes, eq(user.id, classes.teacherId))
+            .leftJoin(subjects, eq(classes.subjectId, subjects.id))
+            .where(
+              and(eq(user.role, role), eq(subjects.departmentId, departmentId)),
+            )
+            .groupBy(...groupByFields)
+            .orderBy(desc(user.createdAt))
+            .limit(limitPerPage)
+            .offset(offset)
+        : await db
+            .select(baseSelect)
+            .from(user)
+            .leftJoin(enrollments, eq(user.id, enrollments.studentId))
+            .leftJoin(classes, eq(enrollments.classId, classes.id))
+            .leftJoin(subjects, eq(classes.subjectId, subjects.id))
+            .where(
+              and(eq(user.role, role), eq(subjects.departmentId, departmentId)),
+            )
+            .groupBy(...groupByFields)
+            .orderBy(desc(user.createdAt))
+            .limit(limitPerPage)
+            .offset(offset);
+
+    this.setStatus(200);
+    return {
+      data: usersList,
+      pagination: {
+        page: currentPage,
+        limit: limitPerPage,
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / limitPerPage),
       },
     };
   }

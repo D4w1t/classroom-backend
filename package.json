@@ -14,6 +14,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:seed": "tsx src/seed/seed.ts",
     "tsoa:spec": "tsoa spec",
     "tsoa:routes": "tsoa routes",
     "generate:openapi": "npm run tsoa:spec && npm run tsoa:routes"
