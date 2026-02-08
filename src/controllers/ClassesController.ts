@@ -13,7 +13,13 @@ import {
 import { and, desc, eq, getTableColumns, ilike, or, sql } from "drizzle-orm";
 
 import { db } from "../db/index.js";
-import { classes, departments, subjects, user } from "../db/schema/index.js";
+import {
+  classes,
+  departments,
+  enrollments,
+  subjects,
+  user,
+} from "../db/schema/index.js";
 import type {
   ClassesResponse,
   ClassItem,
@@ -21,6 +27,7 @@ import type {
   CreateClassRequest,
   CreateClassResponse,
 } from "../models/ClassDTO.js";
+import { UsersResponse } from "../models/UserDTO.js";
 
 @Route("classes")
 @Tags("Classes")
@@ -164,5 +171,102 @@ export class ClassesController extends Controller {
       this.setStatus(500);
       return { error: "Internal Server Error" };
     }
+  }
+
+  @Get("/{id}/users")
+  @SuccessResponse("200", "Ok")
+  @Response(400, "Bad Request")
+  @Response(404, "Not Found")
+  public async getUsersInClass(
+    @Path() id: number,
+    @Query() role?: string,
+    @Query() limit = 10,
+    @Query() page = 1,
+  ): Promise<UsersResponse | { error: string }> {
+    const classId = Number(id);
+    if (!Number.isFinite(classId)) {
+      this.setStatus(400);
+      return { error: "Invalid class ID" };
+    }
+
+    if (role !== "teacher" && role !== "student") {
+      this.setStatus(400);
+      return { error: "Invalid role" };
+    }
+
+    const currentPage = Math.max(1, Number(page) || 1);
+    const limitPerPage = Math.min(100, Math.max(1, Number(limit) || 10));
+    const offset = (currentPage - 1) * limitPerPage;
+
+    const baseSelect = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      emailVerified: user.emailVerified,
+      image: user.image,
+      role: user.role,
+      imageCldPubId: user.imageCldPubId,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+
+    const groupByFields = [
+      user.id,
+      user.name,
+      user.email,
+      user.emailVerified,
+      user.image,
+      user.role,
+      user.imageCldPubId,
+      user.createdAt,
+      user.updatedAt,
+    ];
+
+    const countResult =
+      role === "teacher"
+        ? await db
+            .select({ count: sql<number>`count(distinct ${user.id})` })
+            .from(user)
+            .leftJoin(classes, eq(user.id, classes.teacherId))
+            .where(and(eq(user.role, role), eq(classes.id, classId)))
+        : await db
+            .select({ count: sql<number>`count(distinct ${user.id})` })
+            .from(user)
+            .leftJoin(enrollments, eq(user.id, enrollments.studentId))
+            .where(and(eq(user.role, role), eq(enrollments.classId, classId)));
+
+    const totalCount = countResult[0]?.count ?? 0;
+
+    const usersList =
+      role === "teacher"
+        ? await db
+            .select(baseSelect)
+            .from(user)
+            .leftJoin(classes, eq(user.id, classes.teacherId))
+            .where(and(eq(user.role, role), eq(classes.id, classId)))
+            .groupBy(...groupByFields)
+            .orderBy(desc(user.createdAt))
+            .limit(limitPerPage)
+            .offset(offset)
+        : await db
+            .select(baseSelect)
+            .from(user)
+            .leftJoin(enrollments, eq(user.id, enrollments.studentId))
+            .where(and(eq(user.role, role), eq(enrollments.classId, classId)))
+            .groupBy(...groupByFields)
+            .orderBy(desc(user.createdAt))
+            .limit(limitPerPage)
+            .offset(offset);
+
+    this.setStatus(200);
+    return {
+      data: usersList,
+      pagination: {
+        page: currentPage,
+        limit: limitPerPage,
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / limitPerPage),
+      },
+    };
   }
 }

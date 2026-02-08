@@ -21,6 +21,7 @@ import {
 } from "../models/SubjectDTO.js";
 import { classes, departments, subjects, user } from "../db/schema/index.js";
 import { db } from "../db/index.js";
+import { ClassesResponse } from "../models/ClassDTO.js";
 
 @Route("subjects")
 @Tags("Subjects")
@@ -174,5 +175,60 @@ export class SubjectsController extends Controller {
       this.setStatus(500);
       return { error: "Internal Server Error" };
     }
+  }
+
+  @Get("/{id}/classes")
+  @SuccessResponse("200", "Ok")
+  @Response(400, "Bad Request")
+  @Response(404, "Not Found")
+  public async getClassesInSubject(
+    @Path() id: number,
+    @Query() limit = 10,
+    @Query() page = 1,
+  ): Promise<ClassesResponse | { error: string }> {
+    const subjectId = Number(id);
+    if (!Number.isFinite(subjectId)) {
+      this.setStatus(400);
+      return { error: "Invalid subject Id" };
+    }
+
+    const currentPage = Math.max(1, Number(page) || 1);
+    const limitPerPage = Math.min(100, Math.max(1, Number(limit) || 10));
+    const offset = (currentPage - 1) * limitPerPage;
+
+    const countResult = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(classes)
+      .where(eq(classes.subjectId, subjectId));
+
+    const totalCount = countResult[0]?.count ?? 0;
+
+    const classsesList = await db
+      .select({
+        ...getTableColumns(classes),
+        teacher: {
+          ...getTableColumns(user),
+        },
+        department: { ...getTableColumns(departments) },
+      })
+      .from(classes)
+      .leftJoin(user, eq(classes.teacherId, user.id))
+      .leftJoin(subjects, eq(classes.subjectId, subjects.id))
+      .leftJoin(departments, eq(subjects.departmentId, departments.id))
+      .where(eq(classes.subjectId, subjectId))
+      .orderBy(desc(classes.createdAt))
+      .limit(limitPerPage)
+      .offset(offset);
+
+    this.setStatus(200);
+    return {
+      data: classsesList,
+      pagination: {
+        page: currentPage,
+        limit: limitPerPage,
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / limitPerPage),
+      },
+    };
   }
 }
