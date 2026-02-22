@@ -21,43 +21,45 @@ export const expressAuthentication = async (
   _scopes?: string[],
 ): Promise<unknown> => {
   if (securityName !== "cookieAuth" && securityName !== "bearerAuth") {
-    return null;
+    const err = new Error("Unknown security scheme");
+    (err as { status?: number }).status = 401;
+    throw err;
   }
 
+  let session;
   try {
-    const headers = buildHeadersFromRequest(request);
-    const session = await auth.api.getSession({ headers });
-
-    if (!session?.user) {
-      const err = new Error("Unauthorized");
-      (err as { status?: number }).status = 401;
-      throw err;
-    }
-
-    const role = session.user.role;
-    const normalizedRole =
-      role === "admin" || role === "teacher" || role === "student"
-        ? role
-        : undefined;
-
-    const userContext: Request["user"] = {
-      id: session.user.id,
-      email: session.user.email ?? null,
-      name: session.user.name ?? null,
-      image: session.user.image ?? null,
-      imageCldPubId: session.user.imageCldPubId ?? null,
-    };
-
-    if (normalizedRole) {
-      userContext.role = normalizedRole;
-    }
-
-    request.user = userContext;
-
-    return session;
+    session = await auth.api.getSession({
+      headers: buildHeadersFromRequest(request),
+    });
   } catch (error) {
+    // Infrastructure failure — let it propagate as-is
+    throw error;
+  }
+
+  if (!session?.user) {
     const err = new Error("Unauthorized");
     (err as { status?: number }).status = 401;
     throw err;
   }
+
+  const role = session.user.role;
+  const normalizedRole =
+    role === "admin" || role === "teacher" || role === "student"
+      ? role
+      : undefined;
+
+  const userContext: Request["user"] = {
+    id: session.user.id,
+    email: session.user.email ?? null,
+    name: session.user.name ?? null,
+    image: session.user.image ?? null,
+    imageCldPubId: session.user.imageCldPubId ?? null,
+  };
+
+  if (normalizedRole) {
+    userContext.role = normalizedRole;
+  }
+
+  request.user = userContext;
+  return userContext;
 };
