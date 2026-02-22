@@ -15,8 +15,11 @@ import { EnrollmentsController } from './../controllers/EnrollmentsController';
 import { DepartmentsController } from './../controllers/DepartmentsController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ClassesController } from './../controllers/ClassesController';
+import { expressAuthentication } from './../middleware/authentication';
+// @ts-ignore - no great way to install types from subpackage
 import type { Request as ExRequest, Response as ExResponse, RequestHandler, Router } from 'express';
 
+const expressAuthenticationRecasted = expressAuthentication as (req: ExRequest, securityName: string, scopes?: string[], res?: ExResponse) => Promise<any>;
 
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -432,6 +435,7 @@ export function RegisterRoutes(app: Router) {
                 page: {"default":1,"in":"query","name":"page","dataType":"double"},
         };
         app.get('/users',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(UsersController)),
             ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.getUsers)),
 
@@ -462,6 +466,7 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
         app.get('/users/:id',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(UsersController)),
             ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.getUserById)),
 
@@ -494,6 +499,7 @@ export function RegisterRoutes(app: Router) {
                 page: {"default":1,"in":"query","name":"page","dataType":"double"},
         };
         app.get('/users/:id/departments',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(UsersController)),
             ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.getUsersInDepartment)),
 
@@ -526,6 +532,7 @@ export function RegisterRoutes(app: Router) {
                 page: {"default":1,"in":"query","name":"page","dataType":"double"},
         };
         app.get('/users/:id/classes',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(UsersController)),
             ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.getClassesForUser)),
 
@@ -559,6 +566,7 @@ export function RegisterRoutes(app: Router) {
                 page: {"default":1,"in":"query","name":"page","dataType":"double"},
         };
         app.get('/subjects',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(SubjectsController)),
             ...(fetchMiddlewares<RequestHandler>(SubjectsController.prototype.getSubjects)),
 
@@ -589,6 +597,7 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"double"},
         };
         app.get('/subjects/:id',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(SubjectsController)),
             ...(fetchMiddlewares<RequestHandler>(SubjectsController.prototype.getSubjectById)),
 
@@ -619,6 +628,7 @@ export function RegisterRoutes(app: Router) {
                 body: {"in":"body","name":"body","required":true,"ref":"SubjectCreateRequest"},
         };
         app.post('/subjects',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(SubjectsController)),
             ...(fetchMiddlewares<RequestHandler>(SubjectsController.prototype.createSubject)),
 
@@ -651,6 +661,7 @@ export function RegisterRoutes(app: Router) {
                 page: {"default":1,"in":"query","name":"page","dataType":"double"},
         };
         app.get('/subjects/:id/classes',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(SubjectsController)),
             ...(fetchMiddlewares<RequestHandler>(SubjectsController.prototype.getClassesInSubject)),
 
@@ -680,6 +691,7 @@ export function RegisterRoutes(app: Router) {
         const argsStatsController_getStats: Record<string, TsoaRoute.ParameterSchema> = {
         };
         app.get('/stats',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(StatsController)),
             ...(fetchMiddlewares<RequestHandler>(StatsController.prototype.getStats)),
 
@@ -710,6 +722,7 @@ export function RegisterRoutes(app: Router) {
                 limit: {"default":5,"in":"query","name":"limit","dataType":"double"},
         };
         app.get('/stats/latest',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(StatsController)),
             ...(fetchMiddlewares<RequestHandler>(StatsController.prototype.getLatest)),
 
@@ -739,6 +752,7 @@ export function RegisterRoutes(app: Router) {
         const argsStatsController_getCharts: Record<string, TsoaRoute.ParameterSchema> = {
         };
         app.get('/stats/charts',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(StatsController)),
             ...(fetchMiddlewares<RequestHandler>(StatsController.prototype.getCharts)),
 
@@ -769,6 +783,7 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"double"},
         };
         app.get('/enrollments/:id',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(EnrollmentsController)),
             ...(fetchMiddlewares<RequestHandler>(EnrollmentsController.prototype.getEnrollmentById)),
 
@@ -799,6 +814,7 @@ export function RegisterRoutes(app: Router) {
                 body: {"in":"body","name":"body","required":true,"ref":"CreateEnrollmentRequest"},
         };
         app.post('/enrollments',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(EnrollmentsController)),
             ...(fetchMiddlewares<RequestHandler>(EnrollmentsController.prototype.createEnrollment)),
 
@@ -829,6 +845,7 @@ export function RegisterRoutes(app: Router) {
                 body: {"in":"body","name":"body","required":true,"ref":"JoinEnrollmentRequest"},
         };
         app.post('/enrollments/join',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(EnrollmentsController)),
             ...(fetchMiddlewares<RequestHandler>(EnrollmentsController.prototype.joinEnrollment)),
 
@@ -861,6 +878,7 @@ export function RegisterRoutes(app: Router) {
                 limit: {"default":10,"in":"query","name":"limit","dataType":"double"},
         };
         app.get('/departments',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(DepartmentsController)),
             ...(fetchMiddlewares<RequestHandler>(DepartmentsController.prototype.getDepartments)),
 
@@ -891,6 +909,7 @@ export function RegisterRoutes(app: Router) {
                 body: {"in":"body","name":"body","required":true,"ref":"CreateDepartmentRequest"},
         };
         app.post('/departments',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(DepartmentsController)),
             ...(fetchMiddlewares<RequestHandler>(DepartmentsController.prototype.createDepartment)),
 
@@ -921,6 +940,7 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"double"},
         };
         app.get('/departments/:id',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(DepartmentsController)),
             ...(fetchMiddlewares<RequestHandler>(DepartmentsController.prototype.getDepartmentById)),
 
@@ -953,6 +973,7 @@ export function RegisterRoutes(app: Router) {
                 page: {"default":1,"in":"query","name":"page","dataType":"double"},
         };
         app.get('/departments/:id/subjects',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(DepartmentsController)),
             ...(fetchMiddlewares<RequestHandler>(DepartmentsController.prototype.getSubjectsInDepartment)),
 
@@ -985,6 +1006,7 @@ export function RegisterRoutes(app: Router) {
                 page: {"default":1,"in":"query","name":"page","dataType":"double"},
         };
         app.get('/departments/:id/classes',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(DepartmentsController)),
             ...(fetchMiddlewares<RequestHandler>(DepartmentsController.prototype.getClassesInDepartment)),
 
@@ -1018,6 +1040,7 @@ export function RegisterRoutes(app: Router) {
                 page: {"default":1,"in":"query","name":"page","dataType":"double"},
         };
         app.get('/departments/:id/users',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(DepartmentsController)),
             ...(fetchMiddlewares<RequestHandler>(DepartmentsController.prototype.getUsersInDepartment)),
 
@@ -1053,6 +1076,7 @@ export function RegisterRoutes(app: Router) {
                 page: {"default":1,"in":"query","name":"page","dataType":"double"},
         };
         app.get('/classes',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(ClassesController)),
             ...(fetchMiddlewares<RequestHandler>(ClassesController.prototype.getClasses)),
 
@@ -1083,6 +1107,7 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"double"},
         };
         app.get('/classes/:id',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(ClassesController)),
             ...(fetchMiddlewares<RequestHandler>(ClassesController.prototype.getClassById)),
 
@@ -1113,6 +1138,7 @@ export function RegisterRoutes(app: Router) {
                 body: {"in":"body","name":"body","required":true,"ref":"CreateClassRequest"},
         };
         app.post('/classes',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(ClassesController)),
             ...(fetchMiddlewares<RequestHandler>(ClassesController.prototype.createClass)),
 
@@ -1146,6 +1172,7 @@ export function RegisterRoutes(app: Router) {
                 page: {"default":1,"in":"query","name":"page","dataType":"double"},
         };
         app.get('/classes/:id/users',
+            authenticateMiddleware([{"cookieAuth":[]},{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(ClassesController)),
             ...(fetchMiddlewares<RequestHandler>(ClassesController.prototype.getUsersInClass)),
 
@@ -1175,6 +1202,76 @@ export function RegisterRoutes(app: Router) {
 
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
+
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+    function authenticateMiddleware(security: TsoaRoute.Security[] = []) {
+        return async function runAuthenticationMiddleware(request: any, response: any, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            // keep track of failed auth attempts so we can hand back the most
+            // recent one.  This behavior was previously existing so preserving it
+            // here
+            const failedAttempts: any[] = [];
+            const pushAndRethrow = (error: any) => {
+                failedAttempts.push(error);
+                throw error;
+            };
+
+            const secMethodOrPromises: Promise<any>[] = [];
+            for (const secMethod of security) {
+                if (Object.keys(secMethod).length > 1) {
+                    const secMethodAndPromises: Promise<any>[] = [];
+
+                    for (const name in secMethod) {
+                        secMethodAndPromises.push(
+                            expressAuthenticationRecasted(request, name, secMethod[name], response)
+                                .catch(pushAndRethrow)
+                        );
+                    }
+
+                    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+                    secMethodOrPromises.push(Promise.all(secMethodAndPromises)
+                        .then(users => { return users[0]; }));
+                } else {
+                    for (const name in secMethod) {
+                        secMethodOrPromises.push(
+                            expressAuthenticationRecasted(request, name, secMethod[name], response)
+                                .catch(pushAndRethrow)
+                        );
+                    }
+                }
+            }
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            try {
+                request['user'] = await Promise.any(secMethodOrPromises);
+
+                // Response was sent in middleware, abort
+                if (response.writableEnded) {
+                    return;
+                }
+
+                next();
+            }
+            catch(err) {
+                // Show most recent error as response
+                const error = failedAttempts.pop();
+                error.status = error.status || 401;
+
+                // Response was sent in middleware, abort
+                if (response.writableEnded) {
+                    return;
+                }
+                next(error);
+            }
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        }
+    }
 
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 }

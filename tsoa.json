@@ -4,9 +4,22 @@
   "controllerPathGlobs": ["src/controllers/*.ts"],
   "spec": {
     "outputDirectory": "dist",
-    "specVersion": 3
+    "specVersion": 3,
+    "securityDefinitions": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "better-auth.session_token"
+      },
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "rootSecurity": [{ "cookieAuth": [] }, { "bearerAuth": [] }]
   },
   "routes": {
-    "routesDir": "src/routes"
+    "routesDir": "src/routes",
+    "authenticationModule": "src/middleware/authentication.ts"
   }
 }
