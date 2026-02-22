@@ -36,6 +36,11 @@ const setupSwagger = (app: Express, port: number | string) => {
         defaultModelsExpandDepth: -1,
         docExpansion: "none",
         tagsSorter: "alpha",
+        persistAuthorization: true,
+        requestInterceptor: (request: any) => {
+          request.credentials = "include";
+          return request;
+        },
       },
     }),
   );
